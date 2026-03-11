@@ -500,7 +500,7 @@ function checkFirebase(){
 
 async function loadData(){
   // Wait briefly for Firebase module to load
-  await new Promise(r=>setTimeout(r,600));
+  await new Promise(r=>setTimeout(r,1000));
   if(checkFirebase()){
     firebaseReady=true;
     try{
@@ -523,7 +523,7 @@ async function loadData(){
     clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
     showSetupWarning();
   }
-  renderAll();
+  showPage('agenda');
 }
 
 async function persistData(){
