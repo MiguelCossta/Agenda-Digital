@@ -147,6 +147,7 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
 .c-epilacao{background:linear-gradient(135deg,#fde8c8,#f5d4a0);color:#6b4a1a;border-left:4px solid var(--gold);}
 .c-sobrancelhas{background:linear-gradient(135deg,#d0d8f0,#bbc4e8);color:#2a3a6b;border-left:4px solid #6a7aaa;}
 .c-rosto{background:linear-gradient(135deg,#ead0f0,#d8b8e8);color:#5a2a6b;border-left:4px solid #aa6aaa;}
+.c-laser{background:linear-gradient(135deg,#d0eef8,#b8dff0);color:#1a4a6b;border-left:4px solid #4a9aba;}
 
 /* ── CLIENTS ── */
 .clients-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
@@ -360,10 +361,117 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
         <div class="form-group">
           <label class="form-label">Serviço</label>
           <select class="form-control" id="apt-service">
-            <option>Unhas Gel</option><option>Unhas Acrílico</option><option>Verniz Gel</option>
-            <option>Lifting Pestanas</option><option>Extensão Pestanas</option>
-            <option>Epilação Cera</option><option>Threading</option>
-            <option>Sobrancelhas</option><option>Tratamento Rosto</option>
+            <optgroup label="💅 Unhas – Aplicação Gel/Acrílico">
+              <option>Unhas – Tamanho XS rente (24€)</option>
+              <option>Unhas – Tamanho S (30€)</option>
+              <option>Unhas – Tamanho M (34€)</option>
+              <option>Unhas – Tamanho L (38€)</option>
+              <option>Unhas – C/Tips (35€)</option>
+            </optgroup>
+            <optgroup label="💅 Unhas – Manutenção Gel/Acrílico">
+              <option>Manut. – Tamanho XS rente (20€)</option>
+              <option>Manut. – Tamanho S (22€)</option>
+              <option>Manut. – Tamanho M (24€)</option>
+              <option>Manut. – Tamanho L (27€)</option>
+            </optgroup>
+            <optgroup label="💅 Unhas – Verniz e Pedicure">
+              <option>Verniz Normal (7€)</option>
+              <option>Verniz de Gel nas Mãos (17€)</option>
+              <option>Verniz de Gel nos Pés (16€)</option>
+              <option>Pedicure Completa s/verniz (23€)</option>
+              <option>Pedicure Completa c/verniz gel (26,50€)</option>
+              <option>Retirar Verniz Gel nos Pés e Arranjar (10€)</option>
+              <option>Arranjar Unhas dos Pés s/verniz (8€)</option>
+            </optgroup>
+            <optgroup label="💅 Unhas – Remoção e Extras">
+              <option>Remoção Total Verniz de Gel (9€)</option>
+              <option>Remoção Total Gel/Acrílico (12€)</option>
+              <option>Remoção Gel/Acrílico p/ nova aplicação (+5€)</option>
+              <option>Manutenção de outra técnica (+5€)</option>
+              <option>Francesa/Babyboomer (+3€)</option>
+              <option>Deep Manicure (+4€)</option>
+            </optgroup>
+            <optgroup label="✨ Pestanas – Aplicação">
+              <option>Pestanas – Fio a Fio (40€)</option>
+              <option>Pestanas – Volume Russo (50€)</option>
+              <option>Pestanas – Volume Brasileiro (45€)</option>
+              <option>Pestanas – Volume Egípcio (45€)</option>
+            </optgroup>
+            <optgroup label="✨ Pestanas – Manutenção Fio a Fio">
+              <option>Pestanas – Fio a Fio 2sem (25€)</option>
+              <option>Pestanas – Fio a Fio 3sem (28€)</option>
+              <option>Pestanas – Fio a Fio 4sem (33€)</option>
+            </optgroup>
+            <optgroup label="✨ Pestanas – Manutenção Volume Russo">
+              <option>Pestanas – Vol. Russo 2sem (30€)</option>
+              <option>Pestanas – Vol. Russo 3sem (33€)</option>
+              <option>Pestanas – Vol. Russo 4sem (37€)</option>
+            </optgroup>
+            <optgroup label="✨ Pestanas – Manutenção Vol. Brasileiro">
+              <option>Pestanas – Vol. Brasileiro 2sem (27€)</option>
+              <option>Pestanas – Vol. Brasileiro 3sem (30€)</option>
+              <option>Pestanas – Vol. Brasileiro 4sem (35€)</option>
+            </optgroup>
+            <optgroup label="✨ Pestanas – Manutenção Vol. Egípcio">
+              <option>Pestanas – Vol. Egípcio 2sem (27€)</option>
+              <option>Pestanas – Vol. Egípcio 3sem (30€)</option>
+              <option>Pestanas – Vol. Egípcio 4sem (35€)</option>
+            </optgroup>
+            <optgroup label="✨ Pestanas – Outros">
+              <option>Pestanas – Remoção (10€)</option>
+              <option>Pestanas – Lifting (30€)</option>
+            </optgroup>
+            <optgroup label="🧵 Threading">
+              <option>Threading – Buço (5€)</option>
+              <option>Threading – Sobrancelha (10€)</option>
+              <option>Threading – Mento (4€)</option>
+              <option>Threading – Rosto Completo (20€)</option>
+            </optgroup>
+            <optgroup label="🌿 Epilação Mulher">
+              <option>Epil. – Pack Perna+Virilha+Axilas (30€)</option>
+              <option>Epil. – Pack 1/2 Perna+Virilha+Axilas (25€)</option>
+              <option>Epil. – Buço (4€)</option>
+              <option>Epil. – Axilas (7,50€)</option>
+              <option>Epil. – Virilha Total (15€)</option>
+              <option>Epil. – Virilha Cavada (12,50€)</option>
+              <option>Epil. – Virilha Bikini (10€)</option>
+              <option>Epil. – Perna Completa (16€)</option>
+              <option>Epil. – 1/2 Perna (12€)</option>
+              <option>Epil. – Sobrancelha a Pinça (5€)</option>
+            </optgroup>
+            <optgroup label="🌿 Epilação Homem">
+              <option>Epil. Homem – Perna Completa (15€)</option>
+              <option>Epil. Homem – Axilas (7,50€)</option>
+              <option>Epil. Homem – Pack Peito+Costas+Barriga (20€)</option>
+            </optgroup>
+            <optgroup label="🔆 Depilação Laser">
+              <option>Laser – Buço (10€)</option>
+              <option>Laser – Rosto (15€)</option>
+              <option>Laser – Axila (20€)</option>
+              <option>Laser – Braços (20€)</option>
+              <option>Laser – Meia Perna (25€)</option>
+              <option>Laser – Perna Completa (35€)</option>
+              <option>Laser – Virilha Bikini (15€)</option>
+              <option>Laser – Virilha Completa (20€)</option>
+              <option>Laser – Corpo Todo Senhora (50€)</option>
+              <option>Laser – Corpo Todo Homem (65€)</option>
+              <option>Laser – Abdomen/Costas (35€)</option>
+            </optgroup>
+            <optgroup label="💄 Maquilhagem">
+              <option>Maquilhagem Social (30€)</option>
+              <option>Maquilhagem Noiva (Sob Consulta)</option>
+              <option>Maquilhagem c/Pestanas (+5€)</option>
+            </optgroup>
+            <optgroup label="🌸 Tratamentos">
+              <option>Limpeza de Pele (35€)</option>
+              <option>Massagem Relaxamento Corpo Todo (30€)</option>
+              <option>Massagem Relaxamento Costas (20€)</option>
+              <option>Massagem Modeladora Individual (30€)</option>
+              <option>Pack Massagens Modeladoras (Sob Consulta)</option>
+            </optgroup>
+            <optgroup label="👁 Sobrancelhas &amp; Rosto">
+              <option>Sobrancelhas</option><option>Tratamento Rosto</option>
+            </optgroup>
           </select>
         </div>
         <div class="form-group">
@@ -460,7 +568,48 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
 // ══════════════════════════════════════════
 const MONTHS=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 const DAYS=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
-const SVC_CLASS={"Unhas Gel":"c-unhas","Unhas Acrílico":"c-unhas","Verniz Gel":"c-unhas","Lifting Pestanas":"c-pestanas","Extensão Pestanas":"c-pestanas","Epilação Cera":"c-epilacao","Threading":"c-epilacao","Sobrancelhas":"c-sobrancelhas","Tratamento Rosto":"c-rosto"};
+const SVC_CLASS={
+  "Unhas Gel":"c-unhas","Unhas Acrílico":"c-unhas","Verniz Gel":"c-unhas",
+  "Unhas – Tamanho XS rente (24€)":"c-unhas","Unhas – Tamanho S (30€)":"c-unhas",
+  "Unhas – Tamanho M (34€)":"c-unhas","Unhas – Tamanho L (38€)":"c-unhas","Unhas – C/Tips (35€)":"c-unhas",
+  "Manut. – Tamanho XS rente (20€)":"c-unhas","Manut. – Tamanho S (22€)":"c-unhas",
+  "Manut. – Tamanho M (24€)":"c-unhas","Manut. – Tamanho L (27€)":"c-unhas",
+  "Verniz Normal (7€)":"c-unhas","Verniz de Gel nas Mãos (17€)":"c-unhas","Verniz de Gel nos Pés (16€)":"c-unhas",
+  "Pedicure Completa s/verniz (23€)":"c-unhas","Pedicure Completa c/verniz gel (26,50€)":"c-unhas",
+  "Retirar Verniz Gel nos Pés e Arranjar (10€)":"c-unhas","Arranjar Unhas dos Pés s/verniz (8€)":"c-unhas",
+  "Remoção Total Verniz de Gel (9€)":"c-unhas","Remoção Total Gel/Acrílico (12€)":"c-unhas",
+  "Remoção Gel/Acrílico p/ nova aplicação (+5€)":"c-unhas","Manutenção de outra técnica (+5€)":"c-unhas",
+  "Francesa/Babyboomer (+3€)":"c-unhas","Deep Manicure (+4€)":"c-unhas",
+  "Lifting Pestanas":"c-pestanas","Extensão Pestanas":"c-pestanas",
+  "Pestanas – Fio a Fio (40€)":"c-pestanas","Pestanas – Volume Russo (50€)":"c-pestanas",
+  "Pestanas – Volume Brasileiro (45€)":"c-pestanas","Pestanas – Volume Egípcio (45€)":"c-pestanas",
+  "Pestanas – Fio a Fio 2sem (25€)":"c-pestanas","Pestanas – Fio a Fio 3sem (28€)":"c-pestanas","Pestanas – Fio a Fio 4sem (33€)":"c-pestanas",
+  "Pestanas – Vol. Russo 2sem (30€)":"c-pestanas","Pestanas – Vol. Russo 3sem (33€)":"c-pestanas","Pestanas – Vol. Russo 4sem (37€)":"c-pestanas",
+  "Pestanas – Vol. Brasileiro 2sem (27€)":"c-pestanas","Pestanas – Vol. Brasileiro 3sem (30€)":"c-pestanas","Pestanas – Vol. Brasileiro 4sem (35€)":"c-pestanas",
+  "Pestanas – Vol. Egípcio 2sem (27€)":"c-pestanas","Pestanas – Vol. Egípcio 3sem (30€)":"c-pestanas","Pestanas – Vol. Egípcio 4sem (35€)":"c-pestanas",
+  "Pestanas – Remoção (10€)":"c-pestanas","Pestanas – Lifting (30€)":"c-pestanas",
+  "Epilação Cera":"c-epilacao","Threading":"c-epilacao",
+  "Threading – Buço (5€)":"c-epilacao","Threading – Sobrancelha (10€)":"c-epilacao",
+  "Threading – Mento (4€)":"c-epilacao","Threading – Rosto Completo (20€)":"c-epilacao",
+  "Epil. – Pack Perna+Virilha+Axilas (30€)":"c-epilacao","Epil. – Pack 1/2 Perna+Virilha+Axilas (25€)":"c-epilacao",
+  "Epil. – Buço (4€)":"c-epilacao","Epil. – Axilas (7,50€)":"c-epilacao",
+  "Epil. – Virilha Total (15€)":"c-epilacao","Epil. – Virilha Cavada (12,50€)":"c-epilacao",
+  "Epil. – Virilha Bikini (10€)":"c-epilacao","Epil. – Perna Completa (16€)":"c-epilacao",
+  "Epil. – 1/2 Perna (12€)":"c-epilacao","Epil. – Sobrancelha a Pinça (5€)":"c-epilacao",
+  "Epil. Homem – Perna Completa (15€)":"c-epilacao","Epil. Homem – Axilas (7,50€)":"c-epilacao",
+  "Epil. Homem – Pack Peito+Costas+Barriga (20€)":"c-epilacao",
+  "Maquilhagem Social (30€)":"c-rosto","Maquilhagem Noiva (Sob Consulta)":"c-rosto","Maquilhagem c/Pestanas (+5€)":"c-rosto",
+  "Limpeza de Pele (35€)":"c-rosto","Massagem Relaxamento Corpo Todo (30€)":"c-rosto",
+  "Massagem Relaxamento Costas (20€)":"c-rosto","Massagem Modeladora Individual (30€)":"c-rosto",
+  "Pack Massagens Modeladoras (Sob Consulta)":"c-rosto",
+  "Sobrancelhas":"c-sobrancelhas","Tratamento Rosto":"c-rosto",
+  "Laser – Buço (10€)":"c-laser","Laser – Rosto (15€)":"c-laser",
+  "Laser – Axila (20€)":"c-laser","Laser – Braços (20€)":"c-laser",
+  "Laser – Meia Perna (25€)":"c-laser","Laser – Perna Completa (35€)":"c-laser",
+  "Laser – Virilha Bikini (15€)":"c-laser","Laser – Virilha Completa (20€)":"c-laser",
+  "Laser – Corpo Todo Senhora (50€)":"c-laser","Laser – Corpo Todo Homem (65€)":"c-laser",
+  "Laser – Abdomen/Costas (35€)":"c-laser"
+};
 
 function todayStr(){return new Date().toISOString().split("T")[0];}
 function dateAdd(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split("T")[0];}
