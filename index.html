@@ -499,8 +499,12 @@ function checkFirebase(){
 }
 
 async function loadData(){
-  // Wait briefly for Firebase module to load
-  await new Promise(r=>setTimeout(r,1000));
+  // Always show seed data immediately so page never appears blank
+  clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
+  showPage('agenda');
+
+  // Then try Firebase in the background
+  await new Promise(r=>setTimeout(r,1200));
   if(checkFirebase()){
     firebaseReady=true;
     try{
@@ -510,20 +514,14 @@ async function loadData(){
         appointments=data.appointments||[];
         nextClientId=data.nextClientId||5;
         nextAptId=data.nextAptId||6;
+        showPage('agenda');
       } else {
-        clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
         await persistData();
       }
-    }catch(e){
-      clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
-      showSetupWarning();
-    }
+    }catch(e){ showSetupWarning(); }
   } else {
-    // Firebase not configured — show banner, use seed data
-    clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
     showSetupWarning();
   }
-  showPage('agenda');
 }
 
 async function persistData(){
