@@ -235,11 +235,6 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
 .bottom-nav .bnv-dot{width:18px;height:2px;border-radius:2px;background:var(--rose);margin-top:2px;opacity:0;}
 .bottom-nav button.active .bnv-dot{opacity:1;}
 
-/* ── BIRTHDAY ── */
-.bday-banner{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#f9d0e8,#fde4f4);border:1.5px solid #d4449a;border-radius:var(--r);padding:12px 16px;margin-bottom:10px;}
-.bday-banner .bday-icon{font-size:26px;flex-shrink:0;}
-.bday-banner .bday-text{font-size:13px;color:#7a1042;line-height:1.5;}
-
 /* ── FIREBASE SETUP BANNER ── */
 .setup-banner{background:linear-gradient(135deg,#fff8e8,#fff0e0);border:1.5px solid #f0c060;border-radius:var(--r);padding:18px 20px;margin-bottom:20px;}
 .setup-banner h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:#7a4a10;margin-bottom:8px;}
@@ -569,13 +564,6 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
         <div class="form-group full">
           <label class="form-label">Email</label>
           <input type="email" class="form-control" id="cl-email" placeholder="email@exemplo.com">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Data de Nascimento</label>
-          <input type="date" class="form-control" id="cl-birthday" placeholder="DD/MM/AAAA">
-        </div>
-        <div class="form-group" style="display:flex;align-items:flex-end">
-          <div style="background:var(--rose-p);border-radius:10px;padding:10px 13px;font-size:12.5px;color:var(--mid);border-left:3px solid var(--rose);line-height:1.5;width:100%">🎂 Será lembrada automaticamente nos <strong>Lembretes</strong> no dia do aniversário.</div>
         </div>
         <div class="form-group full">
           <label class="form-label">Serviços Preferidos</label>
@@ -1098,7 +1086,7 @@ function renderClients(){
     return `<div class="client-card" onclick="openClientDetail(${c.id})">
       <div class="client-avatar">${c.name.charAt(0)}</div>
       <div style="flex:1;min-width:0">
-        <div class="client-name">${c.name}${birthdayToday(c.birthday)?` <span style="font-size:14px">🎂</span>`:""}</div>
+        <div class="client-name">${c.name}</div>
         <div class="client-phone">📱 ${c.phone}</div>
         <div class="tags">
           ${c.services.slice(0,2).map(s=>`<span class="tag">${s}</span>`).join("")}
@@ -1112,7 +1100,7 @@ function renderClients(){
 }
 
 function openClientModal(){
-  ["cl-name","cl-phone","cl-email","cl-birthday","cl-notes"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  ["cl-name","cl-phone","cl-email","cl-notes"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
   document.querySelectorAll(".svc-chip").forEach(c=>c.classList.remove("selected"));
   openModal("overlay-client");
 }
@@ -1123,11 +1111,10 @@ function saveClient(){
   const name=document.getElementById("cl-name").value.trim();
   const phone=document.getElementById("cl-phone").value.trim();
   const email=document.getElementById("cl-email").value.trim();
-  const birthday=document.getElementById("cl-birthday").value||"";
   const notes=document.getElementById("cl-notes").value.trim();
   const services=[...document.querySelectorAll(".svc-chip.selected")].map(c=>c.textContent.replace(/[💅✨🌿👁🌸]\s*/,"").trim());
   if(!name||!phone){showToast("Nome e telefone obrigatórios","⚠️");return;}
-  clients.push({id:nextClientId++,name,phone,email,birthday,services,notes,history:[]});
+  clients.push({id:nextClientId++,name,phone,email,services,notes,history:[]});
   closeModal("overlay-client");
   persistData();
   renderClients();
@@ -1149,10 +1136,9 @@ function openClientDetail(id){
       <div class="client-avatar" style="width:56px;height:56px;font-size:24px">${c.name.charAt(0)}</div>
       <div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--dark)">${c.name}</div>
-        <div style="font-size:13px;color:var(--soft);margin-top:3px">📱 ${c.phone}${c.email?" · ✉️ "+c.email:""}${c.birthday?" · 🎂 "+fmtBirthday(c.birthday):""}</div>
+        <div style="font-size:13px;color:var(--soft);margin-top:3px">📱 ${c.phone}${c.email?" · ✉️ "+c.email:""}</div>
       </div>
     </div>
-    ${c.birthday?`<div class="info-box" style="border-left-color:#d4449a">🎂 <strong>Aniversário:</strong> ${fmtBirthday(c.birthday)}</div>":""}
     ${c.notes?`<div class="info-box">⚠️ <strong>Notas:</strong> ${c.notes}</div>`:""}
     ${nextApt?`<div class="info-box">📅 <strong>Próxima marcação:</strong> ${fmtD(nextApt.date)} às ${nextApt.time} — ${nextApt.service}</div>`:""}
     <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);margin-bottom:10px;font-weight:600">Histórico de Visitas</div>
@@ -1173,68 +1159,17 @@ function bookFromClient(){
   },120);
 }
 
-// ── Birthday helpers ──
-function fmtBirthday(val){
-  if(!val)return"";
-  const[y,m,d]=val.split("-");
-  return d+"/"+m+"/"+y;
-}
-function birthdayToday(birthday){
-  if(!birthday)return false;
-  const t=new Date();
-  const[y,m,d]=birthday.split("-").map(Number);
-  return t.getMonth()+1===m && t.getDate()===d;
-}
-function birthdayDaysAhead(birthday,days){
-  if(!birthday)return false;
-  const t=new Date();
-  const target=new Date(t.getFullYear(),t.getMonth(),t.getDate()+days);
-  const[y,m,d]=birthday.split("-").map(Number);
-  return target.getMonth()+1===m && target.getDate()===d;
-}
-function ageOnBirthday(birthday){
-  if(!birthday)return"";
-  const[y,m,d]=birthday.split("-").map(Number);
-  return new Date().getFullYear()-y;
-}
-
 // ══════════════════════════════════════════
 // REMINDERS
 // ══════════════════════════════════════════
 function renderReminders(){
   const t=todayStr(), tmr=dateAdd(1);
-
-  // ── Birthday cards ──
-  let h="";
-  clients.forEach(c=>{
-    if(!c.birthday)return;
-    const isToday=birthdayToday(c.birthday);
-    const isSoon=!isToday&&birthdayDaysAhead(c.birthday,7);
-    if(!isToday&&!isSoon)return;
-    const age=ageOnBirthday(c.birthday);
-    const label=isToday?"🎉 HOJE":"em 7 dias";
-    const urgency=isToday?`<strong style="color:#d4449a"> ← ${label}</strong>`:`<span style="color:var(--soft)"> · ${label}</span>`;
-    const msg=`Olá ${c.name.split(" ")[0]}! 🎂 A equipa Sofia Ramos Beauty deseja-lhe um feliz aniversário! 🌸 Muitas felicidades e até breve! ✨`;
-    h+=`<div class="reminder-card" style="border-left:4px solid #d4449a">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="rem-icon" style="background:#f9d0e8;font-size:22px">🎂</div>
-        <div>
-          <div class="rem-name">${c.name}${urgency}</div>
-          <div class="rem-info">Aniversário · ${fmtBirthday(c.birthday)}${age?" · "+age+" anos":""} · 📱 ${c.phone}</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,#d4449a,#b02080)" onclick="sendBirthday('whatsapp','${c.phone}','${c.name.split(' ')[0]}')">💬 WhatsApp</button>
-        <button class="btn btn-gold btn-sm" onclick="sendBirthday('sms','${c.phone}','${c.name.split(' ')[0]}')">📱 SMS</button>
-      </div>
-    </div>`;
-  });
-
   const future=appointments.filter(a=>a.date>=t&&a.reminder!=="nenhum").sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
-  if(!future.length&&!h){
+  if(!future.length){
     document.getElementById("reminders-list").innerHTML=`<div class="empty-state"><div class="empty-icon">🔔</div><p>Sem lembretes pendentes.</p></div>`;
     return;
   }
+  let h="";
   future.forEach(apt=>{
     const cl=clients.find(c=>c.id===apt.clientId);
     const types=apt.reminder==="ambos"?["whatsapp","sms"]:[apt.reminder];
@@ -1266,13 +1201,6 @@ function sendReminder(aptId,type,phone,name,date,time,service){
   persistData();
   renderReminders();
   showToast("Lembrete enviado!",type==="whatsapp"?"💬":"📱");
-}
-
-function sendBirthday(type,phone,firstName){
-  const clean=phone.replace(/\s/g,"");
-  const msg=`Olá ${firstName}! 🎂 A equipa Sofia Ramos Beauty deseja-lhe um feliz aniversário! 🌸 Muitas felicidades e até breve! ✨ 913 622 220`;
-  window.open(type==="whatsapp"?`https://wa.me/351${clean}?text=${encodeURIComponent(msg)}`:`sms:+351${clean}?body=${encodeURIComponent(msg)}`,"_blank");
-  showToast("Parabéns enviados a "+firstName+"! 🎂","🎉");
 }
 
 // ══════════════════════════════════════════
