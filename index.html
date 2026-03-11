@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sofia Ramos Beauty – Agenda</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════
+     🔥 FIREBASE CONFIG
+     
+     INSTRUÇÕES:
+     1. Vá a https://console.firebase.google.com
+     2. Crie um projeto (ex: "sofia-ramos-beauty")
+     3. Clique em "Web" (</>) para adicionar uma app
+     4. Copie os valores do firebaseConfig e substitua abaixo
+     5. No menu lateral: Firestore Database → Criar base de dados → Modo de teste
+     ═══════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // ▼▼▼ SUBSTITUA AQUI COM OS SEUS DADOS DO FIREBASE ▼▼▼
+  const firebaseConfig = {
+    apiKey: "COLE_AQUI_A_SUA_API_KEY",
+    authDomain: "COLE_AQUI.firebaseapp.com",
+    projectId: "COLE_AQUI_O_PROJECT_ID",
+    storageBucket: "COLE_AQUI.appspot.com",
+    messagingSenderId: "COLE_AQUI",
+    appId: "COLE_AQUI"
+  };
+  // ▲▲▲ FIM DA CONFIGURAÇÃO ▲▲▲
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window._fbLoad = async () => {
+    try {
+      const snap = await getDoc(doc(db, "agenda", "dados"));
+      return snap.exists() ? snap.data() : null;
+    } catch(e) { console.error("Firebase load error:", e); return null; }
+  };
+
+  window._fbSave = async (data) => {
+    try {
+      await setDoc(doc(db, "agenda", "dados"), data);
+    } catch(e) { console.error("Firebase save error:", e); }
+  };
+</script>
+
+<style>
+:root {
+  --rose: #c9847a; --rose-l: #e8bfbb; --rose-p: #f7eeec;
+  --gold: #b89b72; --gold-l: #e8d9c4;
+  --cream: #fdf8f5; --dark: #2c1f1c; --mid: #6b4c46; --soft: #a07870;
+  --r: 14px; --shadow: 0 4px 24px rgba(44,31,28,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);-webkit-tap-highlight-color:transparent;}
+input,select,button,textarea{font-family:'DM Sans',sans-serif;font-size:16px;}
+button{cursor:pointer;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--rose-l);border-radius:2px}
+
+/* ── HEADER ── */
+header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(44,31,28,.2);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;max-width:1300px;margin:0 auto;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-logo{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold-l),var(--rose-l));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--dark);font-weight:600;border:2px solid rgba(255,255,255,.25);flex-shrink:0;}
+.brand-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:.04em;}
+.brand-name em{font-style:italic;color:var(--rose-l);}
+.desktop-nav{display:flex;gap:4px;}
+.nav-btn{background:none;border:none;color:rgba(255,255,255,.7);font-size:13px;padding:8px 16px;border-radius:20px;transition:all .2s;font-weight:400;}
+.nav-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.nav-btn.active{background:rgba(255,255,255,.2);color:#fff;font-weight:500;}
+.mobile-header-actions{display:none;gap:8px;align-items:center;}
+.hdr-sub{display:none;padding:2px 20px 10px;font-size:13px;opacity:.75;font-weight:500;}
+#saving-badge{font-size:11px;color:rgba(255,255,255,.5);margin-left:4px;}
+
+/* ── LAYOUT ── */
+.app{max-width:1300px;margin:0 auto;padding:24px 20px 24px;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:30px;font-weight:500;transition:all .2s;white-space:nowrap;}
+.btn-primary{background:linear-gradient(135deg,var(--rose),#b0605a);color:#fff;padding:10px 22px;font-size:14px;box-shadow:0 4px 14px rgba(201,132,122,.35);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(201,132,122,.45);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#9a7f58);color:#fff;padding:10px 22px;font-size:14px;}
+.btn-outline{background:transparent;border:1.5px solid var(--rose-l);color:var(--rose);padding:9px 20px;font-size:14px;}
+.btn-outline:hover{background:var(--rose-p);}
+.btn-danger{background:#e05555;color:#fff;padding:9px 18px;font-size:13px;}
+.btn-sm{padding:7px 14px;font-size:13px;}
+.btn-full{width:100%;}
+.btn-icon{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:#fff;border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);border:1px solid rgba(201,132,122,.1);}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--soft);margin-bottom:4px;}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--dark);line-height:1;}
+.stat-sub{font-size:11px;color:var(--soft);margin-top:3px;}
+
+/* ── WEEK NAV ── */
+.week-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;}
+.section-title em{color:var(--rose);font-style:italic;}
+.week-nav{display:flex;align-items:center;gap:8px;background:#fff;border-radius:30px;padding:6px 14px;box-shadow:var(--shadow);border:1px solid rgba(201,132,122,.1);}
+.week-nav button{background:none;border:none;color:var(--rose);font-size:22px;padding:0 4px;line-height:1;}
+.week-label{font-size:13px;color:var(--mid);font-weight:500;min-width:160px;text-align:center;}
+
+/* ── DESKTOP CALENDAR ── */
+.cal-grid{display:grid;grid-template-columns:60px repeat(7,1fr);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(201,132,122,.1);}
+.cal-head{background:linear-gradient(135deg,#2c1f1c,#6b3a34);color:#fff;padding:10px 6px;text-align:center;border-left:1px solid rgba(255,255,255,.05);}
+.cal-head.today-col{background:linear-gradient(135deg,var(--rose),#b0605a);}
+.cal-head .dn{font-size:10px;opacity:.65;text-transform:uppercase;letter-spacing:.07em;}
+.cal-head .dd{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;line-height:1.2;}
+.time-label{background:var(--rose-p);border-right:1px solid rgba(201,132,122,.15);height:56px;display:flex;align-items:flex-start;justify-content:flex-end;padding:5px 8px 0;font-size:11px;color:var(--soft);border-bottom:1px solid rgba(201,132,122,.07);}
+.cal-slot{height:56px;position:relative;border-bottom:1px solid rgba(201,132,122,.07);border-left:1px solid rgba(201,132,122,.06);background:#fff;cursor:pointer;transition:background .12s;}
+.cal-slot:hover{background:rgba(247,238,236,.7);}
+.apt-block{position:absolute;left:3px;right:3px;top:2px;border-radius:7px;padding:3px 7px;font-size:11px;overflow:hidden;cursor:pointer;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.08);transition:transform .15s;}
+.apt-block:hover{transform:scale(1.02);z-index:5;}
+.apt-block .abn{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.apt-block .abs{font-size:10px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── MOBILE LIST ── */
+.mobile-day{margin-bottom:10px;}
+.mobile-day-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--r);color:#fff;margin-bottom:5px;}
+.mobile-day-hdr.is-today{background:linear-gradient(135deg,var(--rose),#b0605a);}
+.mobile-day-hdr.not-today{background:linear-gradient(135deg,#2c1f1c,#6b3a34);}
+.day-hdr-left{display:flex;align-items:center;gap:10px;}
+.day-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;line-height:1;}
+.day-info .dn2{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.05em;}
+.day-info .dm{font-size:12px;opacity:.85;}
+.day-hdr-right{display:flex;align-items:center;gap:8px;}
+.apt-count{background:rgba(255,255,255,.25);border-radius:20px;padding:2px 10px;font-size:12px;}
+.mobile-apt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:11px;margin-bottom:5px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.apt-time-box{background:rgba(255,255,255,.6);border-radius:8px;padding:5px 9px;min-width:50px;text-align:center;flex-shrink:0;}
+.apt-time-box .at{font-size:14px;font-weight:600;}
+.apt-time-box .ad{font-size:10px;opacity:.8;}
+.apt-info .an{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.apt-info .as2{font-size:13px;opacity:.85;}
+.apt-arrow{font-size:18px;opacity:.35;margin-left:auto;flex-shrink:0;}
+
+/* apt colours */
+.c-unhas{background:linear-gradient(135deg,#f0d0cc,#e8bfbb);color:#6b2e28;border-left:4px solid var(--rose);}
+.c-pestanas{background:linear-gradient(135deg,#d4e8d4,#bbd6bb);color:#2a5c2a;border-left:4px solid #6aaa6a;}
+.c-epilacao{background:linear-gradient(135deg,#fde8c8,#f5d4a0);color:#6b4a1a;border-left:4px solid var(--gold);}
+.c-sobrancelhas{background:linear-gradient(135deg,#d0d8f0,#bbc4e8);color:#2a3a6b;border-left:4px solid #6a7aaa;}
+.c-rosto{background:linear-gradient(135deg,#ead0f0,#d8b8e8);color:#5a2a6b;border-left:4px solid #aa6aaa;}
+
+/* ── CLIENTS ── */
+.clients-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.search-wrap{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--rose-l);border-radius:30px;padding:9px 16px;flex:1;max-width:320px;}
+.search-wrap input{border:none;background:none;outline:none;font-size:15px;color:var(--dark);width:100%;}
+.clients-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.client-card{padding:16px 18px;border-radius:var(--r);background:#fff;box-shadow:var(--shadow);border:1px solid rgba(201,132,122,.1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .18s;}
+.client-card:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,132,122,.18);}
+.client-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--rose-l),var(--gold-l));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--mid);font-weight:600;flex-shrink:0;}
+.client-name{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.client-phone{font-size:12px;color:var(--soft);margin-bottom:5px;}
+.tags{display:flex;flex-wrap:wrap;gap:4px;}
+.tag{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--rose-p);color:var(--rose);font-weight:500;}
+.tag-gold{background:var(--gold-l);color:#7a5a30;}
+.tag-warn{background:#fde8c8;color:#7a5a30;}
+
+/* ── REMINDERS ── */
+.reminder-card{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:var(--r);background:#fff;box-shadow:var(--shadow);border:1px solid rgba(201,132,122,.1);margin-bottom:10px;flex-wrap:wrap;gap:10px;transition:opacity .2s;}
+.reminder-card.sent{opacity:.55;}
+.rem-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.rem-name{font-weight:600;font-size:15px;color:var(--dark);}
+.rem-info{font-size:12px;color:var(--soft);margin-top:2px;}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;white-space:nowrap;}
+.badge-pending{background:var(--gold-l);color:#7a5a30;}
+.badge-sent{background:#d4f0d4;color:#2a6a2a;}
+
+/* ── BOTTOM SHEET / MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(44,31,28,.52);backdrop-filter:blur(4px);z-index:200;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.sheet{background:#fff;width:100%;max-height:92vh;overflow-y:auto;border-radius:22px 22px 0 0;padding:0;animation:slideUp .28s ease;}
+.sheet-handle{width:40px;height:4px;border-radius:2px;background:#ddd;margin:10px auto 0;}
+.sheet-body{padding:16px 20px 32px;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--dark);margin-bottom:18px;}
+.modal-title em{color:var(--rose);font-style:italic;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:span 2;}
+.form-label{font-size:11px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.07em;}
+.form-control{padding:11px 13px;border-radius:11px;border:1.5px solid var(--rose-l);background:var(--cream);font-size:16px;color:var(--dark);outline:none;width:100%;-webkit-appearance:none;appearance:none;}
+.form-control:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(201,132,122,.12);}
+.svc-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px;}
+.svc-chip{padding:7px 13px;border-radius:20px;font-size:13px;cursor:pointer;border:1.5px solid #e0e0e0;background:#f5f5f5;transition:all .15s;user-select:none;}
+.svc-chip.selected{background:var(--rose-p);border-color:var(--rose);color:var(--rose);}
+.sheet-footer{display:flex;flex-direction:column;gap:9px;margin-top:18px;padding-top:16px;border-top:1px solid var(--rose-p);}
+.history-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--rose-p);}
+.history-item:last-child{border:none;}
+.h-dot{width:9px;height:9px;border-radius:50%;background:var(--rose);margin-top:5px;flex-shrink:0;}
+.h-date{font-size:12px;color:var(--soft);margin-bottom:2px;}
+.h-svc{font-size:14px;font-weight:500;}
+.h-note{font-size:12px;color:var(--soft);font-style:italic;margin-top:2px;}
+.info-box{background:var(--rose-p);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--mid);border-left:3px solid var(--rose);margin-bottom:12px;}
+.msg-preview{background:var(--rose-p);border-radius:11px;padding:13px 16px;font-size:13px;color:var(--mid);line-height:1.7;border-left:3px solid var(--rose);margin-bottom:18px;}
+.empty-state{text-align:center;padding:56px 20px;color:var(--soft);}
+.empty-icon{font-size:46px;margin-bottom:14px;opacity:.4;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--dark);color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;box-shadow:0 8px 28px rgba(0,0,0,.22);z-index:9999;display:flex;align-items:center;gap:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:all .3s;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--rose-l);z-index:100;box-shadow:0 -4px 18px rgba(44,31,28,.09);}
+.bottom-nav button{flex:1;background:none;border:none;padding:9px 4px 13px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--soft);transition:color .2s;}
+.bottom-nav button.active{color:var(--rose);}
+.bottom-nav .bnv-icon{font-size:22px;}
+.bottom-nav .bnv-label{font-size:10px;font-weight:500;letter-spacing:.02em;}
+.bottom-nav .bnv-dot{width:18px;height:2px;border-radius:2px;background:var(--rose);margin-top:2px;opacity:0;}
+.bottom-nav button.active .bnv-dot{opacity:1;}
+
+/* ── FIREBASE SETUP BANNER ── */
+.setup-banner{background:linear-gradient(135deg,#fff8e8,#fff0e0);border:1.5px solid #f0c060;border-radius:var(--r);padding:18px 20px;margin-bottom:20px;}
+.setup-banner h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:#7a4a10;margin-bottom:8px;}
+.setup-banner p{font-size:13px;color:#8a5a20;line-height:1.6;}
+.setup-banner code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:4px;font-size:12px;}
+
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .desktop-nav{display:none;}
+  .mobile-header-actions{display:flex;}
+  .hdr-sub{display:block;}
+  .app{padding:12px 12px 84px;}
+  .stats-grid{grid-template-columns:repeat(4,1fr);gap:6px;}
+  .stat-card{padding:10px 8px;text-align:center;}
+  .stat-value{font-size:24px;}
+  .stat-sub{display:none;}
+  .section-title{display:none;}
+  .week-nav-row{margin-bottom:10px;}
+  .week-nav{flex:1;}
+  .week-label{min-width:unset;flex:1;}
+  #btn-new-apt-desktop{display:none;}
+  .desktop-cal{display:none;}
+  .mobile-cal{display:block;}
+  .clients-grid{grid-template-columns:1fr;}
+  .bottom-nav{display:flex;}
+  .toast{bottom:76px;}
+  .form-grid{grid-template-columns:1fr 1fr;}
+}
+@media(min-width:701px){
+  .mobile-cal{display:none;}
+  .desktop-cal{display:block;}
+  .overlay{align-items:center;}
+  .sheet{border-radius:20px;max-width:520px;margin:16px;}
+  .sheet-handle{display:none;}
+  .sheet-footer{flex-direction:row;justify-content:flex-end;}
+  .sheet-footer .btn-full{width:auto;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">SR</div>
+      <div class="brand-name">Sofia Ramos <em>Beauty</em></div>
+    </div>
+    <nav class="desktop-nav">
+      <button class="nav-btn active" onclick="showPage('agenda')">📅 Agenda</button>
+      <button class="nav-btn" onclick="showPage('clientes')">👤 Clientes</button>
+      <button class="nav-btn" onclick="showPage('lembretes')">🔔 Lembretes</button>
+      <span id="saving-badge"></span>
+    </nav>
+    <div class="mobile-header-actions">
+      <span id="saving-badge-m" style="font-size:12px;color:rgba(255,255,255,.5);"></span>
+      <button class="btn-icon" id="mobile-add-btn" onclick="mobileAdd()">+</button>
+    </div>
+  </div>
+  <div class="hdr-sub" id="hdr-sub">Agenda</div>
+</header>
+
+<!-- PAGES -->
+<div class="app">
+
+  <!-- ── AGENDA ── -->
+  <div class="page active" id="page-agenda">
+    <div id="setup-warn"></div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="week-nav-row">
+      <h1 class="section-title">Agenda <em>Semanal</em></h1>
+      <div style="display:flex;gap:10px;align-items:center;flex:1;justify-content:flex-end;">
+        <div class="week-nav">
+          <button onclick="changeWeek(-1)">‹</button>
+          <span class="week-label" id="week-label"></span>
+          <button onclick="changeWeek(1)">›</button>
+        </div>
+        <button class="btn btn-primary" id="btn-new-apt-desktop" onclick="openAptModal()">+ Nova Marcação</button>
+      </div>
+    </div>
+    <div class="desktop-cal" id="desktop-cal"></div>
+    <div class="mobile-cal" id="mobile-cal"></div>
+  </div>
+
+  <!-- ── CLIENTES ── -->
+  <div class="page" id="page-clientes">
+    <div class="clients-header">
+      <h1 class="section-title">Clientes <em>Fichas</em></h1>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div class="search-wrap">
+          <span>🔍</span>
+          <input type="search" id="client-search" placeholder="Pesquisar..." oninput="renderClients()">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openClientModal()">+ Nova Ficha</button>
+      </div>
+    </div>
+    <div class="clients-grid" id="clients-grid"></div>
+  </div>
+
+  <!-- ── LEMBRETES ── -->
+  <div class="page" id="page-lembretes">
+    <div class="clients-header">
+      <h1 class="section-title">Lembretes <em>Automáticos</em></h1>
+    </div>
+    <div class="msg-preview">
+      <strong>Mensagem enviada às clientes:</strong><br>
+      "Olá [Nome]! 🌸 Lembramos que tem marcação amanhã, [dia] às [hora] para [serviço] no <em>Sofia Ramos Beauty</em>. Esperamos por si! ✨ Caso precise reagendar, contacte-nos: 913 622 220"
+    </div>
+    <div id="reminders-list"></div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="active" onclick="showPage('agenda')" id="bnv-agenda">
+    <span class="bnv-icon">📅</span><span class="bnv-label">Agenda</span><div class="bnv-dot"></div>
+  </button>
+  <button onclick="showPage('clientes')" id="bnv-clientes">
+    <span class="bnv-icon">👤</span><span class="bnv-label">Clientes</span><div class="bnv-dot"></div>
+  </button>
+  <button onclick="showPage('lembretes')" id="bnv-lembretes">
+    <span class="bnv-icon">🔔</span><span class="bnv-label">Lembretes</span><div class="bnv-dot"></div>
+  </button>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════ MODAL: MARCAÇÃO ═══════════ -->
+<div class="overlay" id="overlay-apt" onclick="if(event.target===this)closeModal('overlay-apt')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-body">
+      <h2 class="modal-title" id="apt-modal-title">Nova <em>Marcação</em></h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Cliente</label>
+          <select class="form-control" id="apt-client"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Serviço</label>
+          <select class="form-control" id="apt-service">
+            <option>Unhas Gel</option><option>Unhas Acrílico</option><option>Verniz Gel</option>
+            <option>Lifting Pestanas</option><option>Extensão Pestanas</option>
+            <option>Epilação Cera</option><option>Threading</option>
+            <option>Sobrancelhas</option><option>Tratamento Rosto</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input type="date" class="form-control" id="apt-date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hora</label>
+          <select class="form-control" id="apt-time"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duração</label>
+          <select class="form-control" id="apt-duration">
+            <option value="30">30 min</option><option value="60" selected>60 min</option>
+            <option value="90">90 min</option><option value="120">2 horas</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lembrete</label>
+          <select class="form-control" id="apt-reminder">
+            <option value="whatsapp">WhatsApp</option>
+            <option value="sms">SMS</option>
+            <option value="ambos">WhatsApp + SMS</option>
+            <option value="nenhum">Sem lembrete</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Notas</label>
+          <input type="text" class="form-control" id="apt-notes" placeholder="Observações opcionais...">
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button class="btn btn-primary btn-full" onclick="saveApt()">Guardar</button>
+        <button class="btn btn-danger btn-full" id="btn-delete-apt" style="display:none" onclick="deleteApt()">🗑 Eliminar Marcação</button>
+        <button class="btn btn-outline btn-full" onclick="closeModal('overlay-apt')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL: NOVA CLIENTE ═══════════ -->
+<div class="overlay" id="overlay-client" onclick="if(event.target===this)closeModal('overlay-client')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-body">
+      <h2 class="modal-title">Nova <em>Ficha de Cliente</em></h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Nome Completo</label>
+          <input type="text" class="form-control" id="cl-name" placeholder="Nome da cliente">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefone</label>
+          <input type="tel" class="form-control" id="cl-phone" placeholder="9XX XXX XXX">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" id="cl-email" placeholder="email@exemplo.com">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Serviços Preferidos</label>
+          <div class="svc-chips" id="svc-chips">
+            <span class="svc-chip" onclick="toggleChip(this)">💅 Unhas</span>
+            <span class="svc-chip" onclick="toggleChip(this)">✨ Pestanas</span>
+            <span class="svc-chip" onclick="toggleChip(this)">🌿 Epilação</span>
+            <span class="svc-chip" onclick="toggleChip(this)">👁 Sobrancelhas</span>
+            <span class="svc-chip" onclick="toggleChip(this)">🌸 Rosto</span>
+          </div>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Notas / Alergias</label>
+          <input type="text" class="form-control" id="cl-notes" placeholder="Ex: alergia a gel, pele sensível...">
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button class="btn btn-primary btn-full" onclick="saveClient()">Guardar Ficha</button>
+        <button class="btn btn-outline btn-full" onclick="closeModal('overlay-client')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL: DETALHE CLIENTE ═══════════ -->
+<div class="overlay" id="overlay-detail" onclick="if(event.target===this)closeModal('overlay-detail')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-body" id="detail-content"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const MONTHS=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const DAYS=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+const SVC_CLASS={"Unhas Gel":"c-unhas","Unhas Acrílico":"c-unhas","Verniz Gel":"c-unhas","Lifting Pestanas":"c-pestanas","Extensão Pestanas":"c-pestanas","Epilação Cera":"c-epilacao","Threading":"c-epilacao","Sobrancelhas":"c-sobrancelhas","Tratamento Rosto":"c-rosto"};
+
+function todayStr(){return new Date().toISOString().split("T")[0];}
+function dateAdd(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split("T")[0];}
+function fmtD(s){if(!s)return"";const p=s.split("-");return p[2]+"/"+p[1]+"/"+p[0];}
+function fmtDt(d){return d.toISOString().split("T")[0];}
+function weekDates(off){
+  const now=new Date(),day=now.getDay();
+  const mon=new Date(now);mon.setDate(now.getDate()-(day===0?6:day-1)+off*7);
+  return Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d;});
+}
+
+let clients=[], appointments=[], nextClientId=1, nextAptId=1;
+let weekOffset=0, editingAptId=null, selectedClientId=null;
+let saving=false;
+
+const SEED_C=[
+  {id:1,name:"Ana Ferreira",phone:"912 345 678",email:"ana@email.com",services:["Unhas","Pestanas"],notes:"",history:[{date:"2026-02-15",service:"Unhas Gel",note:""},{date:"2026-01-18",service:"Lifting Pestanas",note:"Resultado excelente"}]},
+  {id:2,name:"Maria Costa",phone:"934 567 890",email:"maria@email.com",services:["Epilação","Sobrancelhas"],notes:"Pele sensível",history:[{date:"2026-03-01",service:"Epilação Cera",note:"Pele reativa"}]},
+  {id:3,name:"Carla Santos",phone:"961 234 567",email:"carla@email.com",services:["Rosto","Unhas"],notes:"",history:[{date:"2026-02-28",service:"Tratamento Rosto",note:""},{date:"2026-02-10",service:"Verniz Gel",note:""}]},
+  {id:4,name:"Joana Oliveira",phone:"916 789 012",email:"joana@email.com",services:["Pestanas"],notes:"Alergia a colas de base forte",history:[{date:"2026-03-05",service:"Extensão Pestanas",note:""}]},
+];
+const SEED_A=[
+  {id:1,clientId:1,service:"Unhas Gel",date:dateAdd(0),time:"10:00",duration:60,reminder:"whatsapp",notes:"",reminderSent:false},
+  {id:2,clientId:2,service:"Sobrancelhas",date:dateAdd(1),time:"11:00",duration:30,reminder:"sms",notes:"",reminderSent:true},
+  {id:3,clientId:3,service:"Tratamento Rosto",date:dateAdd(2),time:"14:00",duration:90,reminder:"ambos",notes:"",reminderSent:false},
+  {id:4,clientId:4,service:"Extensão Pestanas",date:dateAdd(3),time:"15:30",duration:120,reminder:"whatsapp",notes:"Cola especial",reminderSent:false},
+  {id:5,clientId:1,service:"Lifting Pestanas",date:dateAdd(1),time:"09:00",duration:60,reminder:"whatsapp",notes:"",reminderSent:false},
+];
+
+// ══════════════════════════════════════════
+// FIREBASE SYNC
+// ══════════════════════════════════════════
+let firebaseReady=false;
+function checkFirebase(){
+  return typeof window._fbLoad==="function" && typeof window._fbSave==="function";
+}
+
+async function loadData(){
+  // Wait briefly for Firebase module to load
+  await new Promise(r=>setTimeout(r,600));
+  if(checkFirebase()){
+    firebaseReady=true;
+    try{
+      const data=await window._fbLoad();
+      if(data&&data.clients){
+        clients=data.clients;
+        appointments=data.appointments||[];
+        nextClientId=data.nextClientId||5;
+        nextAptId=data.nextAptId||6;
+      } else {
+        clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
+        await persistData();
+      }
+    }catch(e){
+      clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
+      showSetupWarning();
+    }
+  } else {
+    // Firebase not configured — show banner, use seed data
+    clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
+    showSetupWarning();
+  }
+  renderAll();
+}
+
+async function persistData(){
+  if(!firebaseReady)return;
+  setSaving(true);
+  try{
+    await window._fbSave({clients,appointments,nextClientId,nextAptId});
+  }catch(e){console.error(e);}
+  setSaving(false);
+}
+
+function setSaving(v){
+  saving=v;
+  const b=document.getElementById("saving-badge");
+  const bm=document.getElementById("saving-badge-m");
+  if(b)b.textContent=v?"💾":"";
+  if(bm)bm.textContent=v?"💾":"";
+}
+
+function showSetupWarning(){
+  const el=document.getElementById("setup-warn");
+  if(!el)return;
+  el.innerHTML=`
+    <div class="setup-banner">
+      <h3>⚙️ Configurar Firebase</h3>
+      <p>Para guardar os dados na nuvem, abra o ficheiro <code>index.html</code> num editor de texto e substitua os valores do <code>firebaseConfig</code> com os dados do seu projeto Firebase.<br><br>
+      <strong>Passos:</strong> <a href="https://console.firebase.google.com" target="_blank" style="color:#b87020;">console.firebase.google.com</a> → Criar projeto → Adicionar app Web → Copiar config → Colar no ficheiro → Firestore Database → Criar (modo de teste)</p>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+const PAGE_LABELS={"agenda":"Agenda","clientes":"Clientes","lembretes":"Lembretes"};
+function showPage(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("page-"+page).classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b=>{if(b.textContent.toLowerCase().includes(page.substring(0,4)))b.classList.add("active");});
+  const bnv=document.getElementById("bnv-"+page);
+  if(bnv)bnv.classList.add("active");
+  const sub=document.getElementById("hdr-sub");
+  if(sub)sub.textContent=PAGE_LABELS[page]||"";
+  if(page==="agenda")renderAgenda();
+  if(page==="clientes")renderClients();
+  if(page==="lembretes")renderReminders();
+}
+
+function mobileAdd(){
+  const page=document.querySelector(".page.active")?.id?.replace("page-","");
+  if(page==="agenda")openAptModal();
+  else if(page==="clientes")openClientModal();
+}
+
+// ══════════════════════════════════════════
+// RENDER ALL
+// ══════════════════════════════════════════
+function renderAll(){renderAgenda();renderClients();renderReminders();}
+
+// ══════════════════════════════════════════
+// AGENDA
+// ══════════════════════════════════════════
+const MAIN_HOURS=["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+function buildTimeOptions(){
+  const sel=document.getElementById("apt-time");
+  if(!sel)return;
+  sel.innerHTML="";
+  const times=[];
+  for(let h=9;h<=19;h++){times.push(String(h).padStart(2,"0")+":00");if(h<19)times.push(String(h).padStart(2,"0")+":30");}
+  times.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;sel.appendChild(o);});
+}
+
+function changeWeek(dir){weekOffset+=dir;renderAgenda();}
+
+function renderAgenda(){
+  renderStats();
+  const days=weekDates(weekOffset);
+  const lbl=days[0].getDate()+" "+MONTHS[days[0].getMonth()]+" – "+days[6].getDate()+" "+MONTHS[days[6].getMonth()];
+  document.getElementById("week-label").textContent=lbl;
+  renderDesktopCal(days);
+  renderMobileCal(days);
+}
+
+function renderStats(){
+  const t=todayStr();
+  const wd=weekDates(weekOffset).map(fmtDt);
+  const tApts=appointments.filter(a=>a.date===t).length;
+  const wApts=appointments.filter(a=>wd.includes(a.date)).length;
+  const pend=appointments.filter(a=>!a.reminderSent&&a.date>t).length;
+  document.getElementById("stats-grid").innerHTML=
+    [["Hoje",tApts,"marcações"],["Semana",wApts,"marcações"],["Clientes",clients.length,"registadas"],["Lembretes",pend,"por enviar"]]
+    .map(([l,v,s])=>`<div class="stat-card"><div class="stat-label">${l}</div><div class="stat-value">${v}</div><div class="stat-sub">${s}</div></div>`).join("");
+}
+
+function renderDesktopCal(days){
+  const today=todayStr();
+  let h=`<div style="background:#2c1f1c;"></div>`;
+  days.forEach((d,i)=>{
+    h+=`<div class="cal-head${fmtDt(d)===today?" today-col":""}"><div class="dn">${DAYS[i]}</div><div class="dd">${d.getDate()}</div></div>`;
+  });
+  MAIN_HOURS.forEach(hour=>{
+    h+=`<div class="time-label">${hour}</div>`;
+    days.forEach((d,di)=>{
+      const ds=fmtDt(d);
+      const apts=appointments.filter(a=>a.date===ds&&a.time===hour);
+      let inner=apts.map(apt=>{
+        const cl=clients.find(c=>c.id===apt.clientId);
+        const cls=SVC_CLASS[apt.service]||"c-unhas";
+        return `<div class="apt-block ${cls}" style="height:${Math.max(apt.duration-10,22)}px" onclick="openAptModal(${apt.id});event.stopPropagation()"><div class="abn">${cl?cl.name:"–"}</div><div class="abs">${apt.service}</div></div>`;
+      }).join("");
+      h+=`<div class="cal-slot" onclick="openAptModalAt('${ds}','${hour}')">${inner}</div>`;
+    });
+  });
+  document.getElementById("desktop-cal").innerHTML=`<div class="cal-grid">${h}</div>`;
+}
+
+function renderMobileCal(days){
+  const today=todayStr();
+  let h="";
+  days.forEach((d,i)=>{
+    const ds=fmtDt(d);
+    const isT=ds===today;
+    const dayApts=appointments.filter(a=>a.date===ds).sort((a,b)=>a.time.localeCompare(b.time));
+    h+=`<div class="mobile-day">
+      <div class="mobile-day-hdr ${isT?"is-today":"not-today"}">
+        <div class="day-hdr-left">
+          <div class="day-num">${d.getDate()}</div>
+          <div class="day-info"><div class="dn2">${DAYS[i]}</div><div class="dm">${MONTHS[d.getMonth()]}</div></div>
+        </div>
+        <div class="day-hdr-right">
+          ${dayApts.length?`<span class="apt-count">${dayApts.length} marcação${dayApts.length>1?"ões":""}</span>`:""}
+          <button class="btn-icon" onclick="openAptModalAt('${ds}',null)">+</button>
+        </div>
+      </div>`;
+    dayApts.forEach(apt=>{
+      const cl=clients.find(c=>c.id===apt.clientId);
+      const cls=SVC_CLASS[apt.service]||"c-unhas";
+      h+=`<div class="mobile-apt ${cls}" onclick="openAptModal(${apt.id})">
+        <div class="apt-time-box"><div class="at">${apt.time}</div><div class="ad">${apt.duration}min</div></div>
+        <div class="apt-info" style="flex:1;min-width:0"><div class="an">${cl?cl.name:"–"}</div><div class="as2">${apt.service}</div></div>
+        <div class="apt-arrow">›</div>
+      </div>`;
+    });
+    h+="</div>";
+  });
+  document.getElementById("mobile-cal").innerHTML=h;
+}
+
+// ══════════════════════════════════════════
+// APPOINTMENT MODAL
+// ══════════════════════════════════════════
+function openAptModal(id){
+  editingAptId=id||null;
+  buildTimeOptions();
+  const sel=document.getElementById("apt-client");
+  sel.innerHTML=clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
+  if(id){
+    const apt=appointments.find(a=>a.id===id);
+    if(!apt)return;
+    document.getElementById("apt-modal-title").innerHTML="Editar <em>Marcação</em>";
+    document.getElementById("btn-delete-apt").style.display="block";
+    sel.value=apt.clientId;
+    document.getElementById("apt-service").value=apt.service;
+    document.getElementById("apt-date").value=apt.date;
+    document.getElementById("apt-time").value=apt.time;
+    document.getElementById("apt-duration").value=apt.duration;
+    document.getElementById("apt-reminder").value=apt.reminder;
+    document.getElementById("apt-notes").value=apt.notes||"";
+  } else {
+    document.getElementById("apt-modal-title").innerHTML="Nova <em>Marcação</em>";
+    document.getElementById("btn-delete-apt").style.display="none";
+    document.getElementById("apt-date").value=todayStr();
+    document.getElementById("apt-notes").value="";
+  }
+  openModal("overlay-apt");
+}
+
+function openAptModalAt(date,time){
+  if(!clients.length){showToast("Crie primeiro uma ficha de cliente","⚠️");return;}
+  openAptModal();
+  if(date)document.getElementById("apt-date").value=date;
+  if(time)document.getElementById("apt-time").value=time;
+}
+
+function saveApt(){
+  const clientId=parseInt(document.getElementById("apt-client").value);
+  const service=document.getElementById("apt-service").value;
+  const date=document.getElementById("apt-date").value;
+  const time=document.getElementById("apt-time").value;
+  const duration=parseInt(document.getElementById("apt-duration").value);
+  const reminder=document.getElementById("apt-reminder").value;
+  const notes=document.getElementById("apt-notes").value.trim();
+  if(!date||!time){showToast("Preencha a data e hora","⚠️");return;}
+  if(editingAptId){
+    const apt=appointments.find(a=>a.id===editingAptId);
+    if(apt)Object.assign(apt,{clientId,service,date,time,duration,reminder,notes});
+    showToast("Marcação atualizada!");
+  } else {
+    const cl=clients.find(c=>c.id===clientId);
+    appointments.push({id:nextAptId++,clientId,service,date,time,duration,reminder,notes,reminderSent:false});
+    if(cl)cl.history.unshift({date,service,note:notes});
+    showToast("Marcação criada! ✨");
+  }
+  closeModal("overlay-apt");
+  persistData();
+  renderAll();
+}
+
+function deleteApt(){
+  appointments=appointments.filter(a=>a.id!==editingAptId);
+  closeModal("overlay-apt");
+  persistData();
+  renderAll();
+  showToast("Marcação eliminada","🗑");
+}
+
+// ══════════════════════════════════════════
+// CLIENTS
+// ══════════════════════════════════════════
+function renderClients(){
+  const q=(document.getElementById("client-search")?.value||"").toLowerCase();
+  const list=q?clients.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q)):clients;
+  const grid=document.getElementById("clients-grid");
+  if(!list.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👤</div><p>Nenhuma cliente encontrada.</p></div>`;return;}
+  grid.innerHTML=list.map(c=>{
+    const visits=appointments.filter(a=>a.clientId===c.id).length+c.history.length;
+    return `<div class="client-card" onclick="openClientDetail(${c.id})">
+      <div class="client-avatar">${c.name.charAt(0)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="client-name">${c.name}</div>
+        <div class="client-phone">📱 ${c.phone}</div>
+        <div class="tags">
+          ${c.services.slice(0,2).map(s=>`<span class="tag">${s}</span>`).join("")}
+          ${visits?`<span class="tag tag-gold">🗓 ${visits}</span>`:""}
+          ${c.notes?`<span class="tag tag-warn">⚠️</span>`:""}
+        </div>
+      </div>
+      <div style="font-size:20px;color:#e8bfbb">›</div>
+    </div>`;
+  }).join("");
+}
+
+function openClientModal(){
+  ["cl-name","cl-phone","cl-email","cl-notes"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  document.querySelectorAll(".svc-chip").forEach(c=>c.classList.remove("selected"));
+  openModal("overlay-client");
+}
+
+function toggleChip(el){el.classList.toggle("selected");}
+
+function saveClient(){
+  const name=document.getElementById("cl-name").value.trim();
+  const phone=document.getElementById("cl-phone").value.trim();
+  const email=document.getElementById("cl-email").value.trim();
+  const notes=document.getElementById("cl-notes").value.trim();
+  const services=[...document.querySelectorAll(".svc-chip.selected")].map(c=>c.textContent.replace(/[💅✨🌿👁🌸]\s*/,"").trim());
+  if(!name||!phone){showToast("Nome e telefone obrigatórios","⚠️");return;}
+  clients.push({id:nextClientId++,name,phone,email,services,notes,history:[]});
+  closeModal("overlay-client");
+  persistData();
+  renderClients();
+  showToast("Ficha criada para "+name+"!");
+}
+
+function openClientDetail(id){
+  selectedClientId=id;
+  const c=clients.find(x=>x.id===id);
+  if(!c)return;
+  const nextApt=appointments.filter(a=>a.clientId===id&&a.date>=todayStr()).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const hist=c.history.length?c.history.map((h,i)=>`
+    <div class="history-item">
+      <div class="h-dot"></div>
+      <div><div class="h-date">${fmtD(h.date)}</div><div class="h-svc">${h.service}</div>${h.note?`<div class="h-note">${h.note}</div>`:""}</div>
+    </div>`).join(""):`<p style="color:var(--soft);font-size:13px;text-align:center;padding:18px 0">Sem visitas registadas.</p>`;
+  document.getElementById("detail-content").innerHTML=`
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+      <div class="client-avatar" style="width:56px;height:56px;font-size:24px">${c.name.charAt(0)}</div>
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--dark)">${c.name}</div>
+        <div style="font-size:13px;color:var(--soft);margin-top:3px">📱 ${c.phone}${c.email?" · ✉️ "+c.email:""}</div>
+      </div>
+    </div>
+    ${c.notes?`<div class="info-box">⚠️ <strong>Notas:</strong> ${c.notes}</div>`:""}
+    ${nextApt?`<div class="info-box">📅 <strong>Próxima marcação:</strong> ${fmtD(nextApt.date)} às ${nextApt.time} — ${nextApt.service}</div>`:""}
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);margin-bottom:10px;font-weight:600">Histórico de Visitas</div>
+    ${hist}
+    <div class="sheet-footer" style="margin-top:20px">
+      <button class="btn btn-primary btn-full" onclick="bookFromClient()">+ Nova Marcação</button>
+      <button class="btn btn-outline btn-full" onclick="closeModal('overlay-detail')">Fechar</button>
+    </div>`;
+  openModal("overlay-detail");
+}
+
+function bookFromClient(){
+  closeModal("overlay-detail");
+  showPage("agenda");
+  setTimeout(()=>{
+    openAptModal();
+    if(selectedClientId)document.getElementById("apt-client").value=selectedClientId;
+  },120);
+}
+
+// ══════════════════════════════════════════
+// REMINDERS
+// ══════════════════════════════════════════
+function renderReminders(){
+  const t=todayStr(), tmr=dateAdd(1);
+  const future=appointments.filter(a=>a.date>=t&&a.reminder!=="nenhum").sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+  if(!future.length){
+    document.getElementById("reminders-list").innerHTML=`<div class="empty-state"><div class="empty-icon">🔔</div><p>Sem lembretes pendentes.</p></div>`;
+    return;
+  }
+  let h="";
+  future.forEach(apt=>{
+    const cl=clients.find(c=>c.id===apt.clientId);
+    const types=apt.reminder==="ambos"?["whatsapp","sms"]:[apt.reminder];
+    types.forEach(type=>{
+      h+=`<div class="reminder-card${apt.reminderSent?" sent":""}">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="rem-icon" style="background:${type==="whatsapp"?"#d4f0d4":"#e8d9c4"}">${type==="whatsapp"?"💬":"📱"}</div>
+          <div>
+            <div class="rem-name">${cl?cl.name:"–"}</div>
+            <div class="rem-info">${type==="whatsapp"?"WhatsApp":"SMS"} · ${fmtD(apt.date)} ${apt.time} · ${apt.service}${apt.date===tmr?` <strong style="color:var(--rose)">← AMANHÃ</strong>`:""}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="badge ${apt.reminderSent?"badge-sent":"badge-pending"}">${apt.reminderSent?"✓ Enviado":"⏳ Pendente"}</span>
+          ${!apt.reminderSent?`<button class="btn ${type==="whatsapp"?"btn-primary":"btn-gold"} btn-sm" onclick="sendReminder(${apt.id},'${type}','${cl?cl.phone:""}','${cl?cl.name.split(" ")[0]:""}','${apt.date}','${apt.time}','${apt.service}')">${type==="whatsapp"?"💬 WhatsApp":"📱 SMS"}</button>`:""}
+        </div>
+      </div>`;
+    });
+  });
+  document.getElementById("reminders-list").innerHTML=h;
+}
+
+function sendReminder(aptId,type,phone,name,date,time,service){
+  const clean=phone.replace(/\s/g,"");
+  const msg=`Olá ${name}! 🌸 Lembramos que tem marcação amanhã, ${fmtD(date)} às ${time} para ${service} no Sofia Ramos Beauty. Esperamos por si! ✨ Caso precise reagendar, contacte-nos: 913 622 220`;
+  window.open(type==="whatsapp"?`https://wa.me/351${clean}?text=${encodeURIComponent(msg)}`:`sms:+351${clean}?body=${encodeURIComponent(msg)}`,"_blank");
+  const apt=appointments.find(a=>a.id===aptId);
+  if(apt)apt.reminderSent=true;
+  persistData();
+  renderReminders();
+  showToast("Lembrete enviado!",type==="whatsapp"?"💬":"📱");
+}
+
+// ══════════════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add("open");}
+function closeModal(id){document.getElementById(id).classList.remove("open");}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+let toastTimer=null;
+function showToast(msg,icon){
+  icon=icon||"✅";
+  const t=document.getElementById("toast");
+  t.textContent=icon+" "+msg;
+  t.classList.add("show");
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>
