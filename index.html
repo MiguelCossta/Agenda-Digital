@@ -149,12 +149,24 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
 .apt-arrow{font-size:18px;opacity:.35;margin-left:auto;flex-shrink:0;}
 
 /* apt colours */
-.c-unhas{background:linear-gradient(135deg,#f0d0cc,#e8bfbb);color:#6b2e28;border-left:4px solid var(--rose);}
-.c-pestanas{background:linear-gradient(135deg,#d4e8d4,#bbd6bb);color:#2a5c2a;border-left:4px solid #6aaa6a;}
-.c-epilacao{background:linear-gradient(135deg,#fde8c8,#f5d4a0);color:#6b4a1a;border-left:4px solid var(--gold);}
-.c-sobrancelhas{background:linear-gradient(135deg,#d0d8f0,#bbc4e8);color:#2a3a6b;border-left:4px solid #6a7aaa;}
-.c-rosto{background:linear-gradient(135deg,#ead0f0,#d8b8e8);color:#5a2a6b;border-left:4px solid #aa6aaa;}
-.c-laser{background:linear-gradient(135deg,#d0eef8,#b8dff0);color:#1a4a6b;border-left:4px solid #4a9aba;}
+/* ── CATEGORY COLORS ── */
+.c-unhas{background:linear-gradient(135deg,#f9d0e8,#f4b8d8);color:#7a1042;border-left:5px solid #d4449a;}
+.c-pestanas{background:linear-gradient(135deg,#c8f0dc,#9ae0c0);color:#0d5c35;border-left:5px solid #1daa60;}
+.c-epilacao{background:linear-gradient(135deg,#fde4b0,#fac86a);color:#6a3000;border-left:5px solid #e88200;}
+.c-sobrancelhas{background:linear-gradient(135deg,#ccd8f8,#a0bcf4);color:#0d2480;border-left:5px solid #2a52d8;}
+.c-rosto{background:linear-gradient(135deg,#e8ccf8,#d098f0);color:#4a0872;border-left:5px solid #8c22d8;}
+.c-laser{background:linear-gradient(135deg,#b8eeff,#72d4f8);color:#003658;border-left:5px solid #0092c7;}
+
+/* Category legend */
+.cat-legend{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.cat-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 8px;border-radius:20px;font-size:11.5px;font-weight:600;letter-spacing:.01em;white-space:nowrap;cursor:default;}
+.cat-pill .cp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.cp-unhas   {background:#f9d0e8;color:#7a1042;} .cp-unhas    .cp-dot{background:#d4449a;}
+.cp-pestanas{background:#c8f0dc;color:#0d5c35;} .cp-pestanas .cp-dot{background:#1daa60;}
+.cp-epilacao{background:#fde4b0;color:#6a3000;} .cp-epilacao .cp-dot{background:#e88200;}
+.cp-sobrancelhas{background:#ccd8f8;color:#0d2480;} .cp-sobrancelhas .cp-dot{background:#2a52d8;}
+.cp-rosto   {background:#e8ccf8;color:#4a0872;} .cp-rosto    .cp-dot{background:#8c22d8;}
+.cp-laser   {background:#b8eeff;color:#003658;} .cp-laser    .cp-dot{background:#0092c7;}
 
 /* ── CLIENTS ── */
 .clients-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
@@ -222,6 +234,11 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
 .bottom-nav .bnv-label{font-size:10px;font-weight:500;letter-spacing:.02em;}
 .bottom-nav .bnv-dot{width:18px;height:2px;border-radius:2px;background:var(--rose);margin-top:2px;opacity:0;}
 .bottom-nav button.active .bnv-dot{opacity:1;}
+
+/* ── BIRTHDAY ── */
+.bday-banner{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#f9d0e8,#fde4f4);border:1.5px solid #d4449a;border-radius:var(--r);padding:12px 16px;margin-bottom:10px;}
+.bday-banner .bday-icon{font-size:26px;flex-shrink:0;}
+.bday-banner .bday-text{font-size:13px;color:#7a1042;line-height:1.5;}
 
 /* ── FIREBASE SETUP BANNER ── */
 .setup-banner{background:linear-gradient(135deg,#fff8e8,#fff0e0);border:1.5px solid #f0c060;border-radius:var(--r);padding:18px 20px;margin-bottom:20px;}
@@ -414,6 +431,14 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
         <button class="btn btn-primary" id="btn-new-apt-desktop" onclick="openAptModal()">+ Nova Marcação</button>
       </div>
     </div>
+    <div class="cat-legend">
+      <div class="cat-pill cp-unhas"><span class="cp-dot"></span>💅 Unhas</div>
+      <div class="cat-pill cp-pestanas"><span class="cp-dot"></span>✨ Pestanas</div>
+      <div class="cat-pill cp-epilacao"><span class="cp-dot"></span>🌿 Epilação</div>
+      <div class="cat-pill cp-sobrancelhas"><span class="cp-dot"></span>👁 Sobrancelhas</div>
+      <div class="cat-pill cp-rosto"><span class="cp-dot"></span>💄 Rosto</div>
+      <div class="cat-pill cp-laser"><span class="cp-dot"></span>🔆 Laser</div>
+    </div>
     <div class="desktop-cal" id="desktop-cal"></div>
     <div class="mobile-cal" id="mobile-cal"></div>
   </div>
@@ -545,6 +570,13 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
           <label class="form-label">Email</label>
           <input type="email" class="form-control" id="cl-email" placeholder="email@exemplo.com">
         </div>
+        <div class="form-group">
+          <label class="form-label">Data de Nascimento</label>
+          <input type="date" class="form-control" id="cl-birthday" placeholder="DD/MM/AAAA">
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end">
+          <div style="background:var(--rose-p);border-radius:10px;padding:10px 13px;font-size:12.5px;color:var(--mid);border-left:3px solid var(--rose);line-height:1.5;width:100%">🎂 Será lembrada automaticamente nos <strong>Lembretes</strong> no dia do aniversário.</div>
+        </div>
         <div class="form-group full">
           <label class="form-label">Serviços Preferidos</label>
           <div class="svc-chips" id="svc-chips">
@@ -577,6 +609,19 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
 </div>
 
 <script>
+// ── Helper: detect category class (supports multi-service appointments) ──
+function getAptCls(apt){
+  const svcs = (apt.services && apt.services.length) ? apt.services : (apt.service ? [apt.service] : []);
+  for(const s of svcs){
+    const direct = SVC_CLASS[s];
+    if(direct) return direct;
+    // prefix fallback
+    const key = Object.keys(SVC_CLASS).find(k => s && (s.startsWith(k.split(' ')[0]) || k.startsWith(s.split(' ')[0])));
+    if(key) return SVC_CLASS[key];
+  }
+  return 'c-unhas';
+}
+
 // ══════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════
@@ -790,7 +835,7 @@ function renderDesktopCal(days){
       const apts=appointments.filter(a=>a.date===ds&&a.time===hour);
       let inner=apts.map(apt=>{
         const cl=clients.find(c=>c.id===apt.clientId);
-        const cls=SVC_CLASS[apt.service]||"c-unhas";
+        const cls=getAptCls(apt);
         const svcLabel=apt.services&&apt.services.length>1?apt.services[0]+"…":apt.service;
         const totalLabel=apt.total>0?` · ${apt.total%1?apt.total.toFixed(2):apt.total}€`:"";
         return `<div class="apt-block ${cls}" style="height:${Math.max(apt.duration-10,22)}px" onclick="openAptModal(${apt.id});event.stopPropagation()"><div class="abn">${cl?cl.name:"–"}</div><div class="abs">${svcLabel}${totalLabel}</div>${apt.tecnica?`<div class="abs" style="opacity:.7">👤 ${apt.tecnica.split(" ")[0]}</div>`:""}</div>`;
@@ -821,7 +866,7 @@ function renderMobileCal(days){
       </div>`;
     dayApts.forEach(apt=>{
       const cl=clients.find(c=>c.id===apt.clientId);
-      const cls=SVC_CLASS[apt.service]||"c-unhas";
+      const cls=getAptCls(apt);
       h+=`<div class="mobile-apt ${cls}" onclick="openAptModal(${apt.id})">
         <div class="apt-time-box"><div class="at">${apt.time}</div><div class="ad">${apt.duration}min</div></div>
         <div class="apt-info" style="flex:1;min-width:0"><div class="an">${cl?cl.name:"–"}</div><div class="as2">${apt.services&&apt.services.length>1?apt.services[0]+" +"+( apt.services.length-1)+" serviço"+(apt.services.length>2?"s":""):apt.service}${apt.total>0?" · "+(apt.total%1?apt.total.toFixed(2):apt.total)+"€":""}</div>${apt.tecnica?`<div class="as2" style="opacity:.75;font-size:12px">👤 ${apt.tecnica.split(" ")[0]}</div>`:""}</div>
@@ -1053,7 +1098,7 @@ function renderClients(){
     return `<div class="client-card" onclick="openClientDetail(${c.id})">
       <div class="client-avatar">${c.name.charAt(0)}</div>
       <div style="flex:1;min-width:0">
-        <div class="client-name">${c.name}</div>
+        <div class="client-name">${c.name}${birthdayToday(c.birthday)?` <span style="font-size:14px">🎂</span>`:""}</div>
         <div class="client-phone">📱 ${c.phone}</div>
         <div class="tags">
           ${c.services.slice(0,2).map(s=>`<span class="tag">${s}</span>`).join("")}
@@ -1067,7 +1112,7 @@ function renderClients(){
 }
 
 function openClientModal(){
-  ["cl-name","cl-phone","cl-email","cl-notes"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  ["cl-name","cl-phone","cl-email","cl-birthday","cl-notes"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
   document.querySelectorAll(".svc-chip").forEach(c=>c.classList.remove("selected"));
   openModal("overlay-client");
 }
@@ -1078,10 +1123,11 @@ function saveClient(){
   const name=document.getElementById("cl-name").value.trim();
   const phone=document.getElementById("cl-phone").value.trim();
   const email=document.getElementById("cl-email").value.trim();
+  const birthday=document.getElementById("cl-birthday").value||"";
   const notes=document.getElementById("cl-notes").value.trim();
   const services=[...document.querySelectorAll(".svc-chip.selected")].map(c=>c.textContent.replace(/[💅✨🌿👁🌸]\s*/,"").trim());
   if(!name||!phone){showToast("Nome e telefone obrigatórios","⚠️");return;}
-  clients.push({id:nextClientId++,name,phone,email,services,notes,history:[]});
+  clients.push({id:nextClientId++,name,phone,email,birthday,services,notes,history:[]});
   closeModal("overlay-client");
   persistData();
   renderClients();
@@ -1103,9 +1149,10 @@ function openClientDetail(id){
       <div class="client-avatar" style="width:56px;height:56px;font-size:24px">${c.name.charAt(0)}</div>
       <div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--dark)">${c.name}</div>
-        <div style="font-size:13px;color:var(--soft);margin-top:3px">📱 ${c.phone}${c.email?" · ✉️ "+c.email:""}</div>
+        <div style="font-size:13px;color:var(--soft);margin-top:3px">📱 ${c.phone}${c.email?" · ✉️ "+c.email:""}${c.birthday?" · 🎂 "+fmtBirthday(c.birthday):""}</div>
       </div>
     </div>
+    ${c.birthday?`<div class="info-box" style="border-left-color:#d4449a">🎂 <strong>Aniversário:</strong> ${fmtBirthday(c.birthday)}</div>":""}
     ${c.notes?`<div class="info-box">⚠️ <strong>Notas:</strong> ${c.notes}</div>`:""}
     ${nextApt?`<div class="info-box">📅 <strong>Próxima marcação:</strong> ${fmtD(nextApt.date)} às ${nextApt.time} — ${nextApt.service}</div>`:""}
     <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);margin-bottom:10px;font-weight:600">Histórico de Visitas</div>
@@ -1126,17 +1173,68 @@ function bookFromClient(){
   },120);
 }
 
+// ── Birthday helpers ──
+function fmtBirthday(val){
+  if(!val)return"";
+  const[y,m,d]=val.split("-");
+  return d+"/"+m+"/"+y;
+}
+function birthdayToday(birthday){
+  if(!birthday)return false;
+  const t=new Date();
+  const[y,m,d]=birthday.split("-").map(Number);
+  return t.getMonth()+1===m && t.getDate()===d;
+}
+function birthdayDaysAhead(birthday,days){
+  if(!birthday)return false;
+  const t=new Date();
+  const target=new Date(t.getFullYear(),t.getMonth(),t.getDate()+days);
+  const[y,m,d]=birthday.split("-").map(Number);
+  return target.getMonth()+1===m && target.getDate()===d;
+}
+function ageOnBirthday(birthday){
+  if(!birthday)return"";
+  const[y,m,d]=birthday.split("-").map(Number);
+  return new Date().getFullYear()-y;
+}
+
 // ══════════════════════════════════════════
 // REMINDERS
 // ══════════════════════════════════════════
 function renderReminders(){
   const t=todayStr(), tmr=dateAdd(1);
+
+  // ── Birthday cards ──
+  let h="";
+  clients.forEach(c=>{
+    if(!c.birthday)return;
+    const isToday=birthdayToday(c.birthday);
+    const isSoon=!isToday&&birthdayDaysAhead(c.birthday,7);
+    if(!isToday&&!isSoon)return;
+    const age=ageOnBirthday(c.birthday);
+    const label=isToday?"🎉 HOJE":"em 7 dias";
+    const urgency=isToday?`<strong style="color:#d4449a"> ← ${label}</strong>`:`<span style="color:var(--soft)"> · ${label}</span>`;
+    const msg=`Olá ${c.name.split(" ")[0]}! 🎂 A equipa Sofia Ramos Beauty deseja-lhe um feliz aniversário! 🌸 Muitas felicidades e até breve! ✨`;
+    h+=`<div class="reminder-card" style="border-left:4px solid #d4449a">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="rem-icon" style="background:#f9d0e8;font-size:22px">🎂</div>
+        <div>
+          <div class="rem-name">${c.name}${urgency}</div>
+          <div class="rem-info">Aniversário · ${fmtBirthday(c.birthday)}${age?" · "+age+" anos":""} · 📱 ${c.phone}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,#d4449a,#b02080)" onclick="sendBirthday('whatsapp','${c.phone}','${c.name.split(' ')[0]}')">💬 WhatsApp</button>
+        <button class="btn btn-gold btn-sm" onclick="sendBirthday('sms','${c.phone}','${c.name.split(' ')[0]}')">📱 SMS</button>
+      </div>
+    </div>`;
+  });
+
   const future=appointments.filter(a=>a.date>=t&&a.reminder!=="nenhum").sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
-  if(!future.length){
+  if(!future.length&&!h){
     document.getElementById("reminders-list").innerHTML=`<div class="empty-state"><div class="empty-icon">🔔</div><p>Sem lembretes pendentes.</p></div>`;
     return;
   }
-  let h="";
   future.forEach(apt=>{
     const cl=clients.find(c=>c.id===apt.clientId);
     const types=apt.reminder==="ambos"?["whatsapp","sms"]:[apt.reminder];
@@ -1168,6 +1266,13 @@ function sendReminder(aptId,type,phone,name,date,time,service){
   persistData();
   renderReminders();
   showToast("Lembrete enviado!",type==="whatsapp"?"💬":"📱");
+}
+
+function sendBirthday(type,phone,firstName){
+  const clean=phone.replace(/\s/g,"");
+  const msg=`Olá ${firstName}! 🎂 A equipa Sofia Ramos Beauty deseja-lhe um feliz aniversário! 🌸 Muitas felicidades e até breve! ✨ 913 622 220`;
+  window.open(type==="whatsapp"?`https://wa.me/351${clean}?text=${encodeURIComponent(msg)}`:`sms:+351${clean}?body=${encodeURIComponent(msg)}`,"_blank");
+  showToast("Parabéns enviados a "+firstName+"! 🎂","🎉");
 }
 
 // ══════════════════════════════════════════
