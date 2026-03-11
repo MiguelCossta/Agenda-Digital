@@ -499,6 +499,14 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
           </select>
         </div>
         <div class="form-group full">
+          <label class="form-label">Técnica</label>
+          <select class="form-control" id="apt-tecnica">
+            <option value="">— Selecionar técnica —</option>
+            <option value="Sofia Ramos">💅 Sofia Ramos</option>
+            <option value="Sara Rodrigues">💅 Sara Rodrigues</option>
+          </select>
+        </div>
+        <div class="form-group full">
           <label class="form-label">Notas</label>
           <input type="text" class="form-control" id="apt-notes" placeholder="Observações opcionais...">
         </div>
@@ -780,7 +788,7 @@ function renderDesktopCal(days){
       let inner=apts.map(apt=>{
         const cl=clients.find(c=>c.id===apt.clientId);
         const cls=SVC_CLASS[apt.service]||"c-unhas";
-        return `<div class="apt-block ${cls}" style="height:${Math.max(apt.duration-10,22)}px" onclick="openAptModal(${apt.id});event.stopPropagation()"><div class="abn">${cl?cl.name:"–"}</div><div class="abs">${apt.service}</div></div>`;
+        return `<div class="apt-block ${cls}" style="height:${Math.max(apt.duration-10,22)}px" onclick="openAptModal(${apt.id});event.stopPropagation()"><div class="abn">${cl?cl.name:"–"}</div><div class="abs">${apt.service}</div>${apt.tecnica?`<div class="abs" style="opacity:.7">👤 ${apt.tecnica.split(" ")[0]}</div>`:""}</div>`;
       }).join("");
       h+=`<div class="cal-slot" onclick="openAptModalAt('${ds}','${hour}')">${inner}</div>`;
     });
@@ -811,7 +819,7 @@ function renderMobileCal(days){
       const cls=SVC_CLASS[apt.service]||"c-unhas";
       h+=`<div class="mobile-apt ${cls}" onclick="openAptModal(${apt.id})">
         <div class="apt-time-box"><div class="at">${apt.time}</div><div class="ad">${apt.duration}min</div></div>
-        <div class="apt-info" style="flex:1;min-width:0"><div class="an">${cl?cl.name:"–"}</div><div class="as2">${apt.service}</div></div>
+        <div class="apt-info" style="flex:1;min-width:0"><div class="an">${cl?cl.name:"–"}</div><div class="as2">${apt.service}</div>${apt.tecnica?`<div class="as2" style="opacity:.75;font-size:12px">👤 ${apt.tecnica.split(" ")[0]}</div>`:""}</div>
         <div class="apt-arrow">›</div>
       </div>`;
     });
@@ -839,11 +847,13 @@ function openAptModal(id){
     document.getElementById("apt-time").value=apt.time;
     document.getElementById("apt-duration").value=apt.duration;
     document.getElementById("apt-reminder").value=apt.reminder;
+    document.getElementById("apt-tecnica").value=apt.tecnica||"";
     document.getElementById("apt-notes").value=apt.notes||"";
   } else {
     document.getElementById("apt-modal-title").innerHTML="Nova <em>Marcação</em>";
     document.getElementById("btn-delete-apt").style.display="none";
     document.getElementById("apt-date").value=todayStr();
+    document.getElementById("apt-tecnica").value="";
     document.getElementById("apt-notes").value="";
   }
   openModal("overlay-apt");
@@ -859,6 +869,7 @@ function openAptModalAt(date,time){
 function saveApt(){
   const clientId=parseInt(document.getElementById("apt-client").value);
   const service=document.getElementById("apt-service").value;
+  const tecnica=document.getElementById("apt-tecnica").value;
   const date=document.getElementById("apt-date").value;
   const time=document.getElementById("apt-time").value;
   const duration=parseInt(document.getElementById("apt-duration").value);
@@ -867,11 +878,11 @@ function saveApt(){
   if(!date||!time){showToast("Preencha a data e hora","⚠️");return;}
   if(editingAptId){
     const apt=appointments.find(a=>a.id===editingAptId);
-    if(apt)Object.assign(apt,{clientId,service,date,time,duration,reminder,notes});
+    if(apt)Object.assign(apt,{clientId,service,tecnica,date,time,duration,reminder,notes});
     showToast("Marcação atualizada!");
   } else {
     const cl=clients.find(c=>c.id===clientId);
-    appointments.push({id:nextAptId++,clientId,service,date,time,duration,reminder,notes,reminderSent:false});
+    appointments.push({id:nextAptId++,clientId,service,tecnica,date,time,duration,reminder,notes,reminderSent:false});
     if(cl)cl.history.unshift({date,service,note:notes});
     showToast("Marcação criada! ✨");
   }
