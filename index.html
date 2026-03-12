@@ -277,6 +277,7 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
 @media(max-width:479px){
   .desktop-nav{display:none;}
   .mobile-header-actions{display:flex;}
+  #mobile-logout-btn{display:flex!important;}
   .hdr-sub{display:block;}
   .brand-name{font-size:16px;}
   .header-inner{padding:10px 14px;}
@@ -311,6 +312,7 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
 @media(min-width:480px) and (max-width:700px){
   .desktop-nav{display:none;}
   .mobile-header-actions{display:flex;}
+  #mobile-logout-btn{display:flex!important;}
   .hdr-sub{display:block;}
   .app{padding:12px 14px 84px;}
   .stats-grid{grid-template-columns:repeat(4,1fr);gap:6px;}
@@ -445,7 +447,13 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
     </nav>
     <div style="color:rgba(255,255,255,.6);font-size:12px;margin-left:4px;" id="user-greeting"></div>
     <div class="mobile-header-actions">
+      <button class="btn-icon" id="mobile-logout-btn" onclick="toggleLogoutMenu()" style="font-size:15px;display:none;" title="Conta">👤</button>
       <button class="btn-icon" id="mobile-add-btn" onclick="mobileAdd()">+</button>
+    </div>
+    <!-- Menu logout mobile -->
+    <div id="logout-menu" style="display:none;position:absolute;top:60px;right:14px;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(44,31,28,.25);z-index:200;min-width:180px;overflow:hidden;">
+      <div id="logout-menu-name" style="padding:14px 18px 10px;font-size:13px;color:#a07870;border-bottom:1px solid #f0e8e6;"></div>
+      <button onclick="doLogout();toggleLogoutMenu();" style="width:100%;padding:13px 18px;background:none;border:none;text-align:left;font-size:14px;color:#c0392b;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;">🚪 Terminar sessão</button>
     </div>
   </div>
   <div class="hdr-sub" id="hdr-sub">Agenda</div>
@@ -1311,7 +1319,26 @@ function showApp(user) {
   document.getElementById('main-app').style.display = '';
   const gr = document.getElementById('user-greeting');
   if(gr) gr.textContent = '👤 ' + user.name;
+  const mn = document.getElementById('logout-menu-name');
+  if(mn) mn.textContent = user.name;
   loadData();
+}
+
+function toggleLogoutMenu() {
+  const menu = document.getElementById('logout-menu');
+  if(!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  // Fechar ao clicar fora
+  if(menu.style.display === 'block') {
+    setTimeout(() => {
+      document.addEventListener('click', function closeMenu(e) {
+        if(!menu.contains(e.target) && e.target.id !== 'mobile-logout-btn') {
+          menu.style.display = 'none';
+          document.removeEventListener('click', closeMenu);
+        }
+      });
+    }, 10);
+  }
 }
 
 async function doLogin() {
