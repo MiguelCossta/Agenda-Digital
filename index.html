@@ -831,7 +831,7 @@ function renderDesktopCal(days){
         const cls=getAptCls(apt);
         const svcLabel=apt.services&&apt.services.length>1?apt.services[0]+"…":apt.service;
         const totalLabel=apt.total>0?` · ${apt.total%1?apt.total.toFixed(2):apt.total}€`:"";
-        return `<div class="apt-block ${cls}" style="height:${Math.max(apt.duration-10,22)}px" onclick="openAptModal(${apt.id});event.stopPropagation()"><div class="abn">${cl?cl.name:"–"}</div><div class="abs">${svcLabel}${totalLabel}</div>${apt.tecnica?`<div class="abs" style="opacity:.7">👤 ${apt.tecnica.split(" ")[0]}</div>":""}${apt.notes?`<div class="abs apt-notes-line">📝 ${apt.notes}</div>`:""}</div>`;
+        return `<div class="apt-block ${cls}" style="height:${Math.max(apt.duration-10,22)}px" onclick="openAptModal(${apt.id});event.stopPropagation()"><div class="abn">${cl?cl.name:"–"}</div><div class="abs">${svcLabel}${totalLabel}</div>${apt.tecnica?`<div class="abs" style="opacity:.7">👤 ${apt.tecnica.split(" ")[0]}</div>`:""}${apt.notes?`<div class="abs apt-notes-line">📝 ${apt.notes}</div>`:""}</div>`;
       }).join("");
       h+=`<div class="cal-slot" onclick="openAptModalAt('${ds}','${hour}')">${inner}</div>`;
     });
@@ -862,7 +862,7 @@ function renderMobileCal(days){
       const cls=getAptCls(apt);
       h+=`<div class="mobile-apt ${cls}" onclick="openAptModal(${apt.id})">
         <div class="apt-time-box"><div class="at">${apt.time}</div><div class="ad">${apt.duration}min</div></div>
-        <div class="apt-info" style="flex:1;min-width:0"><div class="an">${cl?cl.name:"–"}</div><div class="as2">${apt.services&&apt.services.length>1?apt.services[0]+" +"+( apt.services.length-1)+" serviço"+(apt.services.length>2?"s":""):apt.service}${apt.total>0?" · "+(apt.total%1?apt.total.toFixed(2):apt.total)+"€":""}</div>${apt.tecnica?`<div class="as2" style="opacity:.75;font-size:12px">👤 ${apt.tecnica.split(" ")[0]}</div>":""}${apt.notes?`<div class="as2" style="opacity:.8;font-size:12px">📝 ${apt.notes}</div>`:""}</div>
+        <div class="apt-info" style="flex:1;min-width:0"><div class="an">${cl?cl.name:"–"}</div><div class="as2">${apt.services&&apt.services.length>1?apt.services[0]+" +"+( apt.services.length-1)+" serviço"+(apt.services.length>2?"s":""):apt.service}${apt.total>0?" · "+(apt.total%1?apt.total.toFixed(2):apt.total)+"€":""}</div>${apt.tecnica?`<div class="as2" style="opacity:.75;font-size:12px">👤 ${apt.tecnica.split(" ")[0]}</div>`:""}${apt.notes?`<div class="as2" style="opacity:.8;font-size:12px">📝 ${apt.notes}</div>`:""}</div>
         <div class="apt-arrow">›</div>
       </div>`;
     });
@@ -1145,7 +1145,7 @@ function openClientDetail(id){
         <div style="font-size:13px;color:var(--soft);margin-top:3px">📱 ${c.phone}${c.email?" · ✉️ "+c.email:""}</div>
       </div>
     </div>
-    ${c.birthday?`<div class="info-box">🎂 <strong>Data de nascimento:</strong> ${c.birthday.split("-").reverse().join("/")}</div>":""}
+    ${c.birthday?`<div class="info-box">🎂 <strong>Data de nascimento:</strong> ${c.birthday.split("-").reverse().join("/")}</div>`:""}
     ${c.notes?`<div class="info-box">⚠️ <strong>Notas:</strong> ${c.notes}</div>`:""}
     ${nextApt?`<div class="info-box">📅 <strong>Próxima marcação:</strong> ${fmtD(nextApt.date)} às ${nextApt.time} — ${nextApt.service}</div>`:""}
     <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);margin-bottom:10px;font-weight:600">Histórico de Visitas</div>
