@@ -34,7 +34,6 @@
     appId: "1:645427194957:web:1c6f75f60ea01fc5580004"
   };
 
-  // Utilizadores autorizados (UID → nome)
   const USERS = {
     "h8ghYqBajfOtKTn8AUVpuDEKnFz1": { name: "José Miguel", role: "admin" },
     "qIaGpVBP2JfifMyhHt7SoLzAChU2": { name: "Sara Rodrigues", role: "staff" },
@@ -68,15 +67,16 @@
 
   window._fbLogout = () => signOut(auth);
 
-  window._fbAuthReady = new Promise(resolve => {
-    onAuthStateChanged(auth, user => {
-      if (user && USERS[user.uid]) {
-        resolve({ uid: user.uid, ...USERS[user.uid] });
-      } else {
-        resolve(null);
-      }
-    });
+  // Notifica o script principal quando o estado de auth muda
+  onAuthStateChanged(auth, user => {
+    const info = user ? USERS[user.uid] : null;
+    if (window._onAuthChange) {
+      window._onAuthChange(info ? { uid: user.uid, ...info } : null);
+    }
   });
+
+  window._firebaseReady = true;
+  if (window._onFirebaseReady) window._onFirebaseReady();
 </script>
 
 <style>
@@ -428,17 +428,7 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
   </div>
 </div>
 
-<!-- ECRÃ DE LOGIN -->
-<div id="login-screen" style="display:flex;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);align-items:center;justify-content:center;flex-direction:column;">
-  <div style="background:#fdf8f5;border-radius:20px;padding:40px 36px;width:min(360px,90vw);box-shadow:0 20px 60px rgba(0,0,0,.4);text-align:center;">
-    <p style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#2c1f1c;margin-bottom:4px;font-weight:300;letter-spacing:.03em;">Sofia Ramos <em>Beauty</em></p>
-    <p style="font-size:13px;color:#a07870;margin-bottom:28px;">Agenda Digital</p>
-    <div id="login-error" style="display:none;background:#fdeaea;color:#c0392b;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;"></div>
-    <input id="login-email" type="email" placeholder="Email" autocomplete="username" style="width:100%;padding:12px 16px;border:1.5px solid #e8bfbb;border-radius:10px;font-size:15px;margin-bottom:12px;outline:none;font-family:'DM Sans',sans-serif;color:#2c1f1c;background:#fff;">
-    <input id="login-pass" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;padding:12px 16px;border:1.5px solid #e8bfbb;border-radius:10px;font-size:15px;margin-bottom:20px;outline:none;font-family:'DM Sans',sans-serif;color:#2c1f1c;background:#fff;" onkeydown="if(event.key==='Enter')doLogin()">
-    <button id="login-btn" onclick="doLogin()" style="width:100%;padding:13px;background:linear-gradient(135deg,#c9847a,#b0605a);color:#fff;border:none;border-radius:30px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Entrar</button>
-  </div>
-</div>
+
 
 <!-- HEADER -->
 <header id="main-header" style="display:none;">
@@ -1286,60 +1276,89 @@ function showToast(msg,icon){
 // AUTH
 // ══════════════════════════════════════════
 let currentUser = null;
+let appLoaded = false;
 
-async function doLogin(){
-  const btn = document.getElementById('login-btn');
-  const errEl = document.getElementById('login-error');
-  const email = document.getElementById('login-email').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  errEl.style.display = 'none';
-  btn.textContent = 'A entrar...';
-  btn.style.opacity = '0.7';
-  try {
-    const user = await window._fbLogin(email, pass);
+// Callback chamado pelo módulo Firebase quando o estado de auth muda
+window._onAuthChange = function(user) {
+  if (user && !appLoaded) {
     currentUser = user;
+    appLoaded = true;
     showApp(user);
-  } catch(e) {
-    errEl.textContent = e.message.includes('autorizado') ? 'Acesso não autorizado.' : 'Email ou password incorretos.';
-    errEl.style.display = 'block';
-    btn.textContent = 'Entrar';
-    btn.style.opacity = '1';
+  } else if (!user) {
+    showLoginScreen();
   }
-}
+};
 
-async function doLogout(){
-  await window._fbLogout();
-  currentUser = null;
+function showLoginScreen() {
+  appLoaded = false;
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('main-header').style.display = 'none';
   document.getElementById('main-app').style.display = 'none';
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-pass').value = '';
-  document.getElementById('login-btn').textContent = 'Entrar';
-  document.getElementById('login-btn').style.opacity = '1';
+  const btn = document.getElementById('login-btn');
+  if(btn){ btn.textContent = 'Entrar'; btn.style.opacity = '1'; }
 }
 
-function showApp(user){
+function showApp(user) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-header').style.display = '';
   document.getElementById('main-app').style.display = '';
   const gr = document.getElementById('user-greeting');
   if(gr) gr.textContent = '👤 ' + user.name;
-  loadData();
+  if(!appLoaded){ appLoaded = true; loadData(); }
+  else { showPage('agenda'); }
+}
+
+async function doLogin() {
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) {
+    errEl.textContent = 'Preenche o email e a password.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!window._fbLogin) {
+    errEl.textContent = 'A carregar Firebase... tenta novamente.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  btn.textContent = 'A entrar...';
+  btn.style.opacity = '0.7';
+  btn.disabled = true;
+  try {
+    const user = await window._fbLogin(email, pass);
+    currentUser = user;
+    appLoaded = false;
+    showApp(user);
+    loadData();
+  } catch(e) {
+    const msg = (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential')
+      ? 'Email ou password incorretos.'
+      : e.message.includes('autorizado') ? 'Acesso não autorizado.'
+      : 'Erro ao entrar: ' + (e.code || e.message);
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+    btn.textContent = 'Entrar';
+    btn.style.opacity = '1';
+    btn.disabled = false;
+  }
+}
+
+async function doLogout() {
+  if(window._fbLogout) await window._fbLogout();
+  currentUser = null;
+  appLoaded = false;
+  showLoginScreen();
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
 }
 
 // ══════════════════════════════════════════
-// INIT
+// INIT — mostra ecrã de login enquanto Firebase carrega
 // ══════════════════════════════════════════
-(async () => {
-  const user = await window._fbAuthReady;
-  if(user){
-    currentUser = user;
-    showApp(user);
-  } else {
-    document.getElementById('login-screen').style.display = 'flex';
-  }
-})();
+document.getElementById('login-screen').style.display = 'flex';
 </script>
 </div><!-- end main-app -->
 </body>
