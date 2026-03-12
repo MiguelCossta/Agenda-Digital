@@ -415,6 +415,28 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
   .apt-block{box-shadow:0 1px 4px rgba(0,0,0,.1);}
   .stat-card{box-shadow:0 1px 6px rgba(201,132,122,.12);}
 }
+
+/* ── ESTATÍSTICAS ── */
+.stat-section{background:#fff;border-radius:var(--r);padding:18px;margin-bottom:16px;box-shadow:var(--shadow);}
+.stat-section-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--dark);margin:0 0 14px;letter-spacing:.01em;}
+.kpi-card{background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);text-align:center;}
+.kpi-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--rose);line-height:1;}
+.kpi-label{font-size:11px;color:var(--soft);margin-top:4px;letter-spacing:.04em;text-transform:uppercase;}
+.kpi-sub{font-size:12px;color:var(--rose);margin-top:2px;font-weight:500;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-label{font-size:13px;color:var(--dark);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{flex:1;background:var(--cream);border-radius:6px;height:10px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--rose),var(--gold));transition:width .6s ease;}
+.bar-val{font-size:12px;color:var(--soft);width:60px;text-align:right;flex-shrink:0;}
+.tecnica-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--cream);}
+.tecnica-row:last-child{border-bottom:none;}
+.tecnica-name{font-size:14px;font-weight:600;color:var(--dark);}
+.tecnica-stats{display:flex;gap:18px;}
+.tecnica-stat{text-align:right;}
+.tecnica-stat-val{font-size:15px;font-weight:700;color:var(--rose);}
+.tecnica-stat-lbl{font-size:10px;color:var(--soft);text-transform:uppercase;}
+.day-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.day-name{font-size:12px;color:var(--soft);width:30px;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -444,6 +466,7 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
       <button class="nav-btn active" onclick="showPage('agenda')">📅 Agenda</button>
       <button class="nav-btn" onclick="showPage('clientes')">👤 Clientes</button>
       <button class="nav-btn" onclick="showPage('lembretes')">🔔 Lembretes</button>
+      <button class="nav-btn" onclick="showPage('stats')">📊 Estatísticas</button>
       <button class="nav-btn" onclick="doLogout()" style="opacity:.7;font-size:12px;">🚪 Sair</button>
     </nav>
     <div style="color:rgba(255,255,255,.6);font-size:12px;margin-left:4px;" id="user-greeting"></div>
@@ -518,6 +541,50 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
     <div id="reminders-list"></div>
   </div>
 
+  <div class="page" id="page-stats">
+    <div class="clients-header">
+      <h1 class="section-title">Estatísticas <em>do Negócio</em></h1>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <label style="font-size:13px;color:var(--soft);">Período:</label>
+        <select id="stats-period" class="form-control" style="width:auto;padding:6px 12px;font-size:13px;" onchange="renderStats()">
+          <option value="7">Últimos 7 dias</option>
+          <option value="30" selected>Últimos 30 dias</option>
+          <option value="90">Últimos 3 meses</option>
+          <option value="365">Este ano</option>
+          <option value="0">Todo o histórico</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div id="stats-kpis" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;"></div>
+
+    <!-- Faturação por técnica -->
+    <div class="stat-section">
+      <h2 class="stat-section-title">💰 Faturação por Técnica</h2>
+      <div id="stats-tecnica"></div>
+    </div>
+
+    <!-- Serviços mais populares -->
+    <div class="stat-section">
+      <h2 class="stat-section-title">🏆 Serviços Mais Populares</h2>
+      <div id="stats-servicos"></div>
+    </div>
+
+    <!-- Clientes mais frequentes -->
+    <div class="stat-section">
+      <h2 class="stat-section-title">⭐ Clientes Mais Frequentes</h2>
+      <div id="stats-clientes-freq"></div>
+    </div>
+
+    <!-- Ocupação semanal -->
+    <div class="stat-section">
+      <h2 class="stat-section-title">📅 Marcações por Dia da Semana</h2>
+      <div id="stats-dias"></div>
+    </div>
+  </div>
+
+
 </div>
 
 <!-- BOTTOM NAV -->
@@ -530,6 +597,9 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
   </button>
   <button onclick="showPage('lembretes')" id="bnv-lembretes">
     <span class="bnv-icon">🔔</span><span class="bnv-label">Lembretes</span><div class="bnv-dot"></div>
+  </button>
+  <button onclick="showPage('stats')" id="bnv-stats">
+    <span class="bnv-icon">📊</span><span class="bnv-label">Estatísticas</span><div class="bnv-dot"></div>
   </button>
 </nav>
 
@@ -813,7 +883,147 @@ function showSetupWarning(){
 // ══════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════
-const PAGE_LABELS={"agenda":"Agenda","clientes":"Clientes","lembretes":"Lembretes"};
+
+// ══════════════════════════════════════════
+// ESTATÍSTICAS
+// ══════════════════════════════════════════
+function getStatsPeriod(){
+  const sel = document.getElementById('stats-period');
+  return sel ? parseInt(sel.value) : 30;
+}
+
+function filterAptsByPeriod(days){
+  if(days === 0) return appointments;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  const cutoffStr = cutoff.toISOString().slice(0,10);
+  return appointments.filter(a => a.date >= cutoffStr);
+}
+
+function renderStats(){
+  const days = getStatsPeriod();
+  const apts = filterAptsByPeriod(days);
+
+  // ── KPIs ──
+  const totalMarcacoes = apts.length;
+  const totalFaturacao = apts.reduce((s,a) => s + (a.total||0), 0);
+  const clientesUnicos = new Set(apts.map(a=>a.clientId)).size;
+  const mediaTicket = totalMarcacoes > 0 ? totalFaturacao / totalMarcacoes : 0;
+
+  document.getElementById('stats-kpis').innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-value">${totalMarcacoes}</div>
+      <div class="kpi-label">Marcações</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">${totalFaturacao%1?totalFaturacao.toFixed(2):totalFaturacao}€</div>
+      <div class="kpi-label">Faturação Total</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">${clientesUnicos}</div>
+      <div class="kpi-label">Clientes Únicas</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">${mediaTicket%1?mediaTicket.toFixed(0):mediaTicket}€</div>
+      <div class="kpi-label">Ticket Médio</div>
+    </div>
+  `;
+
+  // ── Faturação por Técnica ──
+  const byTec = {};
+  apts.forEach(a => {
+    const t = a.tecnica || 'Sem técnica';
+    if(!byTec[t]) byTec[t] = {total:0,count:0};
+    byTec[t].total += (a.total||0);
+    byTec[t].count++;
+  });
+  const tecHtml = Object.entries(byTec)
+    .sort((a,b) => b[1].total - a[1].total)
+    .map(([name,d]) => `
+      <div class="tecnica-row">
+        <div class="tecnica-name">💅 ${name}</div>
+        <div class="tecnica-stats">
+          <div class="tecnica-stat">
+            <div class="tecnica-stat-val">${d.total%1?d.total.toFixed(2):d.total}€</div>
+            <div class="tecnica-stat-lbl">Faturado</div>
+          </div>
+          <div class="tecnica-stat">
+            <div class="tecnica-stat-val">${d.count}</div>
+            <div class="tecnica-stat-lbl">Marcações</div>
+          </div>
+          <div class="tecnica-stat">
+            <div class="tecnica-stat-val">${d.count>0?(d.total/d.count).toFixed(0):0}€</div>
+            <div class="tecnica-stat-lbl">Média</div>
+          </div>
+        </div>
+      </div>
+    `).join('') || '<p style="color:var(--soft);font-size:13px;">Sem dados no período.</p>';
+  document.getElementById('stats-tecnica').innerHTML = tecHtml;
+
+  // ── Serviços mais populares ──
+  const bySvc = {};
+  apts.forEach(a => {
+    const svcs = a.services && a.services.length ? a.services : (a.service ? [a.service] : []);
+    svcs.forEach(s => {
+      bySvc[s] = (bySvc[s]||0) + 1;
+    });
+  });
+  const maxSvc = Math.max(1, ...Object.values(bySvc));
+  const svcHtml = Object.entries(bySvc)
+    .sort((a,b) => b[1]-a[1])
+    .slice(0,8)
+    .map(([name,count]) => `
+      <div class="bar-row">
+        <div class="bar-label" title="${name}">${name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/maxSvc*100)}%"></div></div>
+        <div class="bar-val">${count}x</div>
+      </div>
+    `).join('') || '<p style="color:var(--soft);font-size:13px;">Sem dados no período.</p>';
+  document.getElementById('stats-servicos').innerHTML = svcHtml;
+
+  // ── Clientes mais frequentes ──
+  const byClient = {};
+  apts.forEach(a => {
+    const cl = clients.find(c=>c.id===a.clientId);
+    const name = cl ? cl.name : 'Desconhecida';
+    if(!byClient[name]) byClient[name] = {count:0, total:0};
+    byClient[name].count++;
+    byClient[name].total += (a.total||0);
+  });
+  const maxCl = Math.max(1, ...Object.values(byClient).map(d=>d.count));
+  const clHtml = Object.entries(byClient)
+    .sort((a,b) => b[1].count - a[1].count)
+    .slice(0,8)
+    .map(([name,d]) => `
+      <div class="bar-row">
+        <div class="bar-label" title="${name}">${name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(d.count/maxCl*100)}%;background:linear-gradient(90deg,var(--gold),var(--rose));"></div></div>
+        <div class="bar-val">${d.count}x · ${d.total%1?d.total.toFixed(0):d.total}€</div>
+      </div>
+    `).join('') || '<p style="color:var(--soft);font-size:13px;">Sem dados no período.</p>';
+  document.getElementById('stats-clientes-freq').innerHTML = clHtml;
+
+  // ── Marcações por dia da semana ──
+  const DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const byDay = [0,0,0,0,0,0,0];
+  apts.forEach(a => {
+    if(a.date){
+      const d = new Date(a.date + 'T12:00:00');
+      byDay[d.getDay()]++;
+    }
+  });
+  const maxDay = Math.max(1, ...byDay);
+  const dayHtml = DAYS.map((name,i) => `
+    <div class="day-row">
+      <div class="day-name">${name}</div>
+      <div class="bar-track" style="flex:1;"><div class="bar-fill" style="width:${Math.round(byDay[i]/maxDay*100)}%;background:linear-gradient(90deg,#b89b72,#c9847a);"></div></div>
+      <div class="bar-val">${byDay[i]}</div>
+    </div>
+  `).join('');
+  document.getElementById('stats-dias').innerHTML = dayHtml;
+}
+
+const PAGE_LABELS={"agenda":"Agenda","clientes":"Clientes","lembretes":"Lembretes","stats":"Estatísticas"};
 function showPage(page){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
@@ -827,6 +1037,7 @@ function showPage(page){
   if(page==="agenda")renderAgenda();
   if(page==="clientes")renderClients();
   if(page==="lembretes")renderReminders();
+  if(page==="stats")renderStats();
 }
 
 function mobileAdd(){
