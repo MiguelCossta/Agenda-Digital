@@ -548,10 +548,10 @@ header{background:linear-gradient(135deg,#2c1f1c 0%,#6b3a34 60%,#c9847a 100%);co
         <label style="font-size:13px;color:var(--soft);">Período:</label>
         <select id="stats-period" class="form-control" style="width:auto;padding:6px 12px;font-size:13px;" onchange="renderStats()">
           <option value="7">Últimos 7 dias</option>
-          <option value="30" selected>Últimos 30 dias</option>
+          <option value="30">Últimos 30 dias</option>
           <option value="90">Últimos 3 meses</option>
           <option value="365">Este ano</option>
-          <option value="0">Todo o histórico</option>
+          <option value="0" selected>Todo o histórico</option>
         </select>
       </div>
     </div>
@@ -1049,7 +1049,13 @@ function mobileAdd(){
 // ══════════════════════════════════════════
 // RENDER ALL
 // ══════════════════════════════════════════
-function renderAll(){renderAgenda();renderClients();renderReminders();}
+function renderAll(){
+  renderAgenda();
+  renderClients();
+  renderReminders();
+  const statsPage = document.getElementById("page-stats");
+  if(statsPage && statsPage.classList.contains("active")) renderStats();
+}
 
 // ══════════════════════════════════════════
 // AGENDA
@@ -1067,7 +1073,7 @@ function buildTimeOptions(){
 function changeWeek(dir){weekOffset+=dir;renderAgenda();}
 
 function renderAgenda(){
-  renderStats();
+  renderAgendaStats();
   const days=weekDates(weekOffset);
   const lbl=days[0].getDate()+" "+MONTHS[days[0].getMonth()]+" – "+days[6].getDate()+" "+MONTHS[days[6].getMonth()];
   document.getElementById("week-label").textContent=lbl;
@@ -1075,7 +1081,7 @@ function renderAgenda(){
   renderMobileCal(days);
 }
 
-function renderStats(){
+function renderAgendaStats(){
   const t=todayStr();
   const wd=weekDates(weekOffset).map(fmtDt);
   const tApts=appointments.filter(a=>a.date===t).length;
