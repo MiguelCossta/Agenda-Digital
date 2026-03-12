@@ -88,7 +88,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
-html,body{height:100%;min-height:100dvh;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);overscroll-behavior:none;}
+html{height:100%;min-height:100dvh;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);}
+body{height:100%;min-height:100dvh;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);overscroll-behavior-x:none;}
 img{max-width:100%;height:auto;}
 input,select,button,textarea{font-family:'DM Sans',sans-serif;font-size:16px;}
 button{cursor:pointer;touch-action:manipulation;}
@@ -1321,6 +1322,7 @@ function showApp(user) {
   if(gr) gr.textContent = '👤 ' + user.name;
   const mn = document.getElementById('logout-menu-name');
   if(mn) mn.textContent = user.name;
+  resetSessionTimer();
   loadData();
 }
 
@@ -1328,7 +1330,6 @@ function toggleLogoutMenu() {
   const menu = document.getElementById('logout-menu');
   if(!menu) return;
   menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-  // Fechar ao clicar fora
   if(menu.style.display === 'block') {
     setTimeout(() => {
       document.addEventListener('click', function closeMenu(e) {
@@ -1340,6 +1341,37 @@ function toggleLogoutMenu() {
     }, 10);
   }
 }
+
+// ══════════════════════════════════════════
+// TIMEOUT DE SESSÃO — 30 minutos de inatividade
+// ══════════════════════════════════════════
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutos em ms
+let sessionTimer = null;
+let warningTimer = null;
+
+function resetSessionTimer() {
+  clearTimeout(sessionTimer);
+  clearTimeout(warningTimer);
+  if (!currentUser) return;
+
+  // Aviso 2 minutos antes
+  warningTimer = setTimeout(() => {
+    if (!currentUser) return;
+    showToast('⚠️ Sessão expira em 2 minutos por inatividade');
+  }, SESSION_TIMEOUT - 2 * 60 * 1000);
+
+  // Logout automático
+  sessionTimer = setTimeout(() => {
+    if (!currentUser) return;
+    showToast('🔒 Sessão terminada por inatividade');
+    setTimeout(() => doLogout(), 1500);
+  }, SESSION_TIMEOUT);
+}
+
+// Reiniciar timer em qualquer interação do utilizador
+['click','touchstart','keydown','scroll'].forEach(ev => {
+  document.addEventListener(ev, () => { if(currentUser) resetSessionTimer(); }, { passive: true });
+});
 
 async function doLogin() {
   const btn = document.getElementById('login-btn');
@@ -1378,6 +1410,8 @@ async function doLogin() {
 }
 
 async function doLogout() {
+  clearTimeout(sessionTimer);
+  clearTimeout(warningTimer);
   if(window._fbLogout) await window._fbLogout();
   currentUser = null;
   appLoaded = false;
