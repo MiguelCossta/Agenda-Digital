@@ -743,12 +743,17 @@ function checkFirebase(){
 }
 
 async function loadData(){
-  // Always show seed data immediately so page never appears blank
-  clients=SEED_C; appointments=SEED_A; nextClientId=5; nextAptId=6;
+  // Mostrar agenda vazia enquanto carrega (sem seed data)
+  clients=[]; appointments=[]; nextClientId=1; nextAptId=1;
   showPage('agenda');
 
-  // Then try Firebase in the background
-  await new Promise(r=>setTimeout(r,1200));
+  // Esperar Firebase estar pronto (máx 5 segundos)
+  let waited = 0;
+  while(!checkFirebase() && waited < 5000){
+    await new Promise(r=>setTimeout(r,200));
+    waited += 200;
+  }
+
   if(checkFirebase()){
     firebaseReady=true;
     try{
@@ -756,13 +761,15 @@ async function loadData(){
       if(data&&data.clients){
         clients=data.clients;
         appointments=data.appointments||[];
-        nextClientId=data.nextClientId||5;
-        nextAptId=data.nextAptId||6;
-        showPage('agenda');
-      } else {
-        await persistData();
+        nextClientId=data.nextClientId||1;
+        nextAptId=data.nextAptId||1;
       }
-    }catch(e){ showSetupWarning(); }
+      // Se não há dados no Firebase, começa com listas vazias (não seed)
+      showPage('agenda');
+    }catch(e){
+      console.error('Erro ao carregar Firebase:', e);
+      showSetupWarning();
+    }
   } else {
     showSetupWarning();
   }
@@ -1304,8 +1311,7 @@ function showApp(user) {
   document.getElementById('main-app').style.display = '';
   const gr = document.getElementById('user-greeting');
   if(gr) gr.textContent = '👤 ' + user.name;
-  if(!appLoaded){ appLoaded = true; loadData(); }
-  else { showPage('agenda'); }
+  loadData();
 }
 
 async function doLogin() {
@@ -1330,9 +1336,7 @@ async function doLogin() {
   try {
     const user = await window._fbLogin(email, pass);
     currentUser = user;
-    appLoaded = false;
     showApp(user);
-    loadData();
   } catch(e) {
     const msg = (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential')
       ? 'Email ou password incorretos.'
