@@ -232,7 +232,7 @@ header{background:linear-gradient(135deg,#8B1A3A 0%,#C2426A 60%,#D9668A 100%);co
 /* ── BOTTOM SHEET / MODAL ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(44,31,28,.52);backdrop-filter:blur(4px);z-index:200;align-items:flex-end;justify-content:center;}
 .overlay.open{display:flex;}
-.sheet{background:#fff;width:100%;max-height:92vh;overflow-y:auto;border-radius:22px 22px 0 0;padding:0;animation:slideUp .28s ease;}
+.sheet{background:#fff;width:100%;max-height:92vh;overflow-y:auto;border-radius:22px 22px 0 0;padding:0;animation:slideUp .28s ease;position:relative;}
 .sheet-handle{width:40px;height:4px;border-radius:2px;background:#ddd;margin:10px auto 0;}
 .sheet-body{padding:16px 20px 32px;}
 .modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--dark);margin-bottom:18px;}
@@ -445,6 +445,32 @@ header{background:linear-gradient(135deg,#8B1A3A 0%,#C2426A 60%,#D9668A 100%);co
 .day-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .day-name{font-size:12px;color:var(--soft);width:30px;flex-shrink:0;}
 
+
+/* ── BOTÃO FECHAR MODAL ── */
+.modal-close-btn{
+  position:absolute;
+  top:16px;
+  right:16px;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:none;
+  background:var(--rose-p);
+  color:var(--rose);
+  font-size:18px;
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:background .15s, transform .15s;
+  z-index:10;
+}
+.modal-close-btn:hover{
+  background:var(--rose-l);
+  color:#fff;
+  transform:scale(1.1);
+}
 /* ── SCROLL LOCK quando modal aberto ── */
 body.modal-open{overflow:hidden;}
 
@@ -701,6 +727,7 @@ if('serviceWorker' in navigator){
 <div class="overlay" id="overlay-apt" onclick="if(event.target===this)closeModal('overlay-apt')">
   <div class="sheet">
     <div class="sheet-handle"></div>
+    <button class="modal-close-btn" onclick="closeModal('overlay-apt')" title="Fechar">✕</button>
     <div class="sheet-body">
       <h2 class="modal-title" id="apt-modal-title">Nova <em>Marcação</em></h2>
       <div class="form-grid">
