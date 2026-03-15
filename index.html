@@ -444,6 +444,56 @@ header{background:linear-gradient(135deg,#8B1A3A 0%,#C2426A 60%,#D9668A 100%);co
 .tecnica-stat-lbl{font-size:10px;color:var(--soft);text-transform:uppercase;}
 .day-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .day-name{font-size:12px;color:var(--soft);width:30px;flex-shrink:0;}
+
+/* ── TOOLTIP MARCAÇÃO ── */
+.apt-tooltip{
+  position:fixed;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 8px 32px rgba(58,10,26,.18);
+  padding:14px 16px;
+  z-index:9000;
+  min-width:220px;
+  max-width:280px;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(4px);
+  transition:opacity .18s ease, transform .18s ease;
+  border:1.5px solid #F0A0B8;
+}
+.apt-tooltip.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+.apt-tooltip-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;
+  font-weight:600;
+  color:#3A0A1A;
+  margin-bottom:6px;
+}
+.apt-tooltip-row{
+  font-size:12px;
+  color:#B05070;
+  margin-bottom:3px;
+  display:flex;
+  align-items:flex-start;
+  gap:6px;
+}
+.apt-tooltip-row span{
+  color:#3A0A1A;
+}
+.apt-tooltip-divider{
+  border:none;
+  border-top:1px solid #FDE8EF;
+  margin:8px 0;
+}
+.apt-tooltip-notes{
+  font-size:12px;
+  color:#3A0A1A;
+  font-style:italic;
+  line-height:1.5;
+}
 </style>
 
 <script>
@@ -636,6 +686,10 @@ if('serviceWorker' in navigator){
     <span class="bnv-icon">📊</span><span class="bnv-label">Estatísticas</span><div class="bnv-dot"></div>
   </button>
 </nav>
+
+
+<!-- TOOLTIP MARCAÇÃO -->
+<div class="apt-tooltip" id="apt-tooltip"></div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -918,6 +972,78 @@ function showSetupWarning(){
 // NAVIGATION
 // ══════════════════════════════════════════
 
+
+// ══════════════════════════════════════════
+// TOOLTIP DE MARCAÇÃO (hover desktop)
+// ══════════════════════════════════════════
+let tooltipTimer = null;
+
+function showAptTooltip(e, aptId) {
+  clearTimeout(tooltipTimer);
+  const apt = appointments.find(a => a.id === aptId);
+  if (!apt) return;
+  const cl = clients.find(c => c.id === apt.clientId);
+  const tooltip = document.getElementById('apt-tooltip');
+  if (!tooltip) return;
+
+  const svcs = apt.services && apt.services.length ? apt.services : (apt.service ? [apt.service] : []);
+  const totalStr = apt.total > 0 ? (apt.total % 1 ? apt.total.toFixed(2) : apt.total) + '€' : null;
+  const [y, m, d] = (apt.date || '').split('-');
+  const dateStr = apt.date ? `${d}/${m}/${y}` : '';
+  const DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const dayName = apt.date ? DAYS[new Date(apt.date + 'T12:00:00').getDay()] : '';
+
+  tooltip.innerHTML = `
+    <div class="apt-tooltip-name">${cl ? cl.name : '–'}</div>
+    <div class="apt-tooltip-row">📅 <span>${dayName}, ${dateStr} às ${apt.time || '–'}</span></div>
+    <div class="apt-tooltip-row">⏱️ <span>${apt.duration || 60} min</span></div>
+    ${apt.tecnica ? `<div class="apt-tooltip-row">💅 <span>${apt.tecnica}</span></div>` : ''}
+    ${totalStr ? `<div class="apt-tooltip-row">💰 <span>${totalStr}</span></div>` : ''}
+    ${svcs.length ? `<hr class="apt-tooltip-divider"><div class="apt-tooltip-row">🛎️ <span>${svcs.join(', ')}</span></div>` : ''}
+    ${apt.notes ? `<hr class="apt-tooltip-divider"><div class="apt-tooltip-row">📝</div><div class="apt-tooltip-notes">${apt.notes}</div>` : ''}
+    ${cl && cl.phone ? `<hr class="apt-tooltip-divider"><div class="apt-tooltip-row">📞 <span>${cl.phone}</span></div>` : ''}
+  `;
+
+  // Posicionar tooltip junto ao cursor
+  const margin = 12;
+  const tw = 280;
+  const th = tooltip.offsetHeight || 180;
+  let left = e.clientX + margin;
+  let top = e.clientY - 20;
+
+  // Evitar sair da janela
+  if (left + tw > window.innerWidth - 10) left = e.clientX - tw - margin;
+  if (top + th > window.innerHeight - 10) top = window.innerHeight - th - 10;
+  if (top < 10) top = 10;
+
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+  tooltip.classList.add('visible');
+}
+
+function hideAptTooltip() {
+  tooltipTimer = setTimeout(() => {
+    const tooltip = document.getElementById('apt-tooltip');
+    if (tooltip) tooltip.classList.remove('visible');
+  }, 80);
+}
+
+// Mover tooltip com o rato
+document.addEventListener('mousemove', function(e) {
+  const tooltip = document.getElementById('apt-tooltip');
+  if (!tooltip || !tooltip.classList.contains('visible')) return;
+  const margin = 12;
+  const tw = 280;
+  const th = tooltip.offsetHeight || 180;
+  let left = e.clientX + margin;
+  let top = e.clientY - 20;
+  if (left + tw > window.innerWidth - 10) left = e.clientX - tw - margin;
+  if (top + th > window.innerHeight - 10) top = window.innerHeight - th - 10;
+  if (top < 10) top = 10;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+});
+
 // ══════════════════════════════════════════
 // ESTATÍSTICAS
 // ══════════════════════════════════════════
@@ -1142,7 +1268,7 @@ function renderDesktopCal(days){
         const cls=getAptCls(apt);
         const svcLabel=apt.services&&apt.services.length>1?apt.services[0]+"…":apt.service;
         const totalLabel=apt.total>0?` · ${apt.total%1?apt.total.toFixed(2):apt.total}€`:"";
-        return `<div class="apt-block ${cls}" style="height:${Math.max(apt.duration-10,22)}px" onclick="openAptModal(${apt.id});event.stopPropagation()"><div class="abn">${cl?cl.name:"–"}</div><div class="abs">${svcLabel}${totalLabel}</div>${apt.tecnica?`<div class="abs" style="opacity:.7">👤 ${apt.tecnica.split(" ")[0]}</div>`:""}${apt.notes?`<div class="abs apt-notes-line">📝 ${apt.notes}</div>`:""}</div>`;
+        return `<div class="apt-block ${cls}" style="height:${Math.max(apt.duration-10,22)}px" onclick="openAptModal(${apt.id});event.stopPropagation()" onmouseenter="showAptTooltip(event,${apt.id})" onmouseleave="hideAptTooltip()"><div class="abn">${cl?cl.name:"–"}</div><div class="abs">${svcLabel}${totalLabel}</div>${apt.tecnica?`<div class="abs" style="opacity:.7">👤 ${apt.tecnica.split(" ")[0]}</div>`:""}${apt.notes?`<div class="abs apt-notes-line">📝 ${apt.notes}</div>`:""}</div>`;
       }).join("");
       h+=`<div class="cal-slot" onclick="openAptModalAt('${ds}','${hour}')">${inner}</div>`;
     });
