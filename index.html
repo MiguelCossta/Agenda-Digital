@@ -445,6 +445,9 @@ header{background:linear-gradient(135deg,#8B1A3A 0%,#C2426A 60%,#D9668A 100%);co
 .day-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .day-name{font-size:12px;color:var(--soft);width:30px;flex-shrink:0;}
 
+/* ── SCROLL LOCK quando modal aberto ── */
+body.modal-open{overflow:hidden;}
+
 /* ── TOOLTIP MARCAÇÃO ── */
 .apt-tooltip{
   position:fixed;
@@ -1312,6 +1315,7 @@ function renderMobileCal(days){
 // APPOINTMENT MODAL
 // ══════════════════════════════════════════
 function openAptModal(id){
+  document.body.classList.add("modal-open");
   editingAptId=id||null;
   buildTimeOptions();
   buildSvcPicker();
@@ -1344,6 +1348,7 @@ function openAptModal(id){
 }
 
 function openAptModalAt(date,time){
+  document.body.classList.add("modal-open");
   if(!clients.length){showToast("Crie primeiro uma ficha de cliente","⚠️");return;}
   openAptModal();
   if(date)document.getElementById("apt-date").value=date;
@@ -1591,6 +1596,7 @@ function renderClients(){
 }
 
 function openClientModal(){
+  document.body.classList.add("modal-open");
   ["cl-name","cl-phone","cl-email","cl-birthday","cl-notes"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
   document.querySelectorAll(".svc-chip").forEach(c=>c.classList.remove("selected"));
   openModal("overlay-client");
@@ -1704,6 +1710,9 @@ function closeModal(id){
   document.getElementById(id).classList.remove("open");
   const w=document.getElementById("conflict-warning");
   if(w) w.style.display="none";
+  // Só remove o lock se não houver outros modais abertos
+  const anyOpen = document.querySelectorAll(".overlay.open").length > 0;
+  if(!anyOpen) document.body.classList.remove("modal-open");
 }
 
 // ══════════════════════════════════════════
