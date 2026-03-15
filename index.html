@@ -1714,32 +1714,81 @@ function renderReminders(){
     document.getElementById("reminders-list").innerHTML=`<div class="empty-state"><div class="empty-icon">🔔</div><p>Sem lembretes pendentes.</p></div>`;
     return;
   }
-  let h="";
+
+  // Agrupar por data
+  const byDate={};
   future.forEach(apt=>{
-    const cl=clients.find(c=>c.id===apt.clientId);
-    const types=apt.reminder==="ambos"?["whatsapp","sms"]:[apt.reminder];
-    types.forEach(type=>{
-      h+=`<div class="reminder-card${apt.reminderSent?" sent":""}">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div class="rem-icon" style="background:${type==="whatsapp"?"#d4f0d4":"#FDE8EF"}">${type==="whatsapp"?"💬":"📱"}</div>
-          <div>
-            <div class="rem-name">${cl?cl.name:"–"}</div>
-            <div class="rem-info">${type==="whatsapp"?"WhatsApp":"SMS"} · ${fmtD(apt.date)} ${apt.time} · ${apt.service}${apt.date===tmr?` <strong style="color:var(--rose)">← AMANHÃ</strong>`:""}</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <span class="badge ${apt.reminderSent?"badge-sent":"badge-pending"}">${apt.reminderSent?"✓ Enviado":"⏳ Pendente"}</span>
-          ${!apt.reminderSent?`<button class="btn ${type==="whatsapp"?"btn-primary":"btn-gold"} btn-sm" onclick="sendReminder(${apt.id},'${type}','${cl?cl.phone:""}','${cl?cl.name.split(" ")[0]:""}','${apt.date}','${apt.time}','${apt.service}')">${type==="whatsapp"?"💬 WhatsApp":"📱 SMS"}</button>`:""}
-        </div>
-      </div>`;
-    });
+    if(!byDate[apt.date]) byDate[apt.date]=[];
+    byDate[apt.date].push(apt);
   });
+
+  // Contadores
+  const totalPend=future.filter(a=>!a.reminderSent).length;
+  const tmrApts=future.filter(a=>a.date===tmr);
+  const tmrPend=tmrApts.filter(a=>!a.reminderSent).length;
+
+  let h=`<div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+    <div style="background:var(--rose-p);border:1.5px solid var(--rose-l);border-radius:12px;padding:12px 18px;flex:1;min-width:140px;">
+      <div style="font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Pendentes</div>
+      <div style="font-size:26px;font-family:'Cormorant Garamond',serif;color:var(--rose);font-weight:600;">${totalPend}</div>
+    </div>
+    <div style="background:${tmrPend>0?"#FFF3E0":"var(--rose-p)"};border:1.5px solid ${tmrPend>0?"#FFB74D":"var(--rose-l)"};border-radius:12px;padding:12px 18px;flex:1;min-width:140px;">
+      <div style="font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Amanhã</div>
+      <div style="font-size:26px;font-family:'Cormorant Garamond',serif;color:${tmrPend>0?"#E65100":"var(--rose)"};font-weight:600;">${tmrPend} <span style="font-size:13px;font-family:'DM Sans',sans-serif;">por enviar</span></div>
+    </div>
+  </div>`;
+
+  Object.keys(byDate).sort().forEach(date=>{
+    const isToday=date===t, isTmr=date===tmr;
+    const label=isToday?"📅 Hoje":isTmr?"⚡ Amanhã — enviar hoje!":"📆 "+fmtD(date);
+    const labelColor=isTmr?"#E65100":"var(--dark)";
+    const bgColor=isTmr?"#FFF3E0":"var(--rose-p)";
+    h+=`<div style="margin-bottom:6px;padding:8px 14px;background:${bgColor};border-radius:10px;font-size:13px;font-weight:600;color:${labelColor};">${label}</div>`;
+
+    byDate[date].forEach(apt=>{
+      const cl=clients.find(c=>c.id===apt.clientId);
+      const types=apt.reminder==="ambos"?["whatsapp","sms"]:[apt.reminder];
+      const svcs=apt.services&&apt.services.length?apt.services.join(", "):apt.service;
+      types.forEach(type=>{
+        const isSent=apt.reminderSent;
+        h+=`<div class="reminder-card${isSent?" sent":""}" style="${isSent?"opacity:.55;":""}">
+          <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+            <div class="rem-icon" style="background:${type==="whatsapp"?"#E8F5E9":"#FDE8EF"}">${type==="whatsapp"?"💬":"📱"}</div>
+            <div style="flex:1;min-width:0">
+              <div class="rem-name">${cl?cl.name:"–"}</div>
+              <div class="rem-info">${apt.time} · ${svcs}${cl&&cl.phone?" · "+cl.phone:""}</div>
+              ${apt.notes?`<div class="rem-info" style="font-style:italic;margin-top:2px;">📝 ${apt.notes}</div>`:""}
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0">
+            <span class="badge ${isSent?"badge-sent":"badge-pending"}">${isSent?"✓ Enviado":"⏳ Pendente"}</span>
+            ${!isSent?`<button class="btn btn-primary btn-sm" style="background:${type==="whatsapp"?"#25D366":"var(--rose)"};border:none;" onclick="sendReminder(${apt.id},'${type}','${cl?cl.phone:""}','${cl?cl.name.split(" ")[0]:""}','${apt.date}','${apt.time}','${apt.service}','${svcs}')"><span style="font-size:14px">${type==="whatsapp"?"💬":"📱"}</span> ${type==="whatsapp"?"Enviar WhatsApp":"Enviar SMS"}</button>`:""}
+          </div>
+        </div>`;
+      });
+    });
+    h+=`<div style="margin-bottom:12px;"></div>`;
+  });
+
   document.getElementById("reminders-list").innerHTML=h;
 }
 
-function sendReminder(aptId,type,phone,name,date,time,service){
+function sendReminder(aptId,type,phone,name,date,time,service,svcs){
   const clean=phone.replace(/\s/g,"");
-  const msg=`Olá ${name}! 🌸 Lembramos que tem marcação amanhã, ${fmtD(date)} às ${time} para ${service} no Sofia Ramos Beauty. Esperamos por si! ✨ Caso precise reagendar, contacte-nos: 913 622 220`;
+  const svcStr=svcs||service;
+  const [y,m,d]=date.split("-");
+  const dateFormatted=`${d}/${m}/${y}`;
+  const DAYS=["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+  const dayName=DAYS[new Date(date+"T12:00:00").getDay()];
+  const msg=`Olá ${name}! 🌸
+
+Lembramos que tem marcação *${dayName}, ${dateFormatted} às ${time}* para *${svcStr}* no *Sofia Ramos Beauty*.
+
+📍 Rua Sá e Melo nº 519, Maia
+
+Esperamos por si! ✨
+
+_Caso precise reagendar, contacte-nos: 913 622 220_`;
   window.open(type==="whatsapp"?`https://wa.me/351${clean}?text=${encodeURIComponent(msg)}`:`sms:+351${clean}?body=${encodeURIComponent(msg)}`,"_blank");
   const apt=appointments.find(a=>a.id===aptId);
   if(apt)apt.reminderSent=true;
