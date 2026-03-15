@@ -500,17 +500,18 @@ if('serviceWorker' in navigator){
       <button class="nav-btn" onclick="showPage('clientes')">👤 Clientes</button>
       <button class="nav-btn" onclick="showPage('lembretes')">🔔 Lembretes</button>
       <button class="nav-btn" onclick="showPage('stats')">📊 Estatísticas</button>
-      <button class="nav-btn" onclick="doLogout()" style="opacity:.7;font-size:12px;">🚪 Sair</button>
     </nav>
-    <div style="color:rgba(255,255,255,.6);font-size:12px;margin-left:4px;" id="user-greeting"></div>
+    <!-- User menu desktop + mobile -->
+    <div style="position:relative;" id="user-menu-wrap">
+      <button id="user-greeting" onclick="toggleLogoutMenu()" style="color:rgba(255,255,255,.75);font-size:13px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:6px 14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.12)'"></button>
+      <div id="logout-menu" style="display:none;position:absolute;top:calc(100% + 10px);right:0;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(44,31,28,.2);z-index:200;min-width:200px;overflow:hidden;">
+        <div id="logout-menu-name" style="padding:14px 18px 10px;font-size:13px;color:#a07870;border-bottom:1px solid #f0e8e6;font-weight:500;"></div>
+        <button onclick="doLogout();toggleLogoutMenu();" style="width:100%;padding:13px 18px;background:none;border:none;text-align:left;font-size:14px;color:#c0392b;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;">🚪 Terminar sessão</button>
+      </div>
+    </div>
     <div class="mobile-header-actions">
       <button class="btn-icon" id="mobile-logout-btn" onclick="toggleLogoutMenu()" style="font-size:15px;display:none;" title="Conta">👤</button>
       <button class="btn-icon" id="mobile-add-btn" onclick="mobileAdd()">+</button>
-    </div>
-    <!-- Menu logout mobile -->
-    <div id="logout-menu" style="display:none;position:absolute;top:60px;right:14px;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(44,31,28,.25);z-index:200;min-width:180px;overflow:hidden;">
-      <div id="logout-menu-name" style="padding:14px 18px 10px;font-size:13px;color:#a07870;border-bottom:1px solid #f0e8e6;"></div>
-      <button onclick="doLogout();toggleLogoutMenu();" style="width:100%;padding:13px 18px;background:none;border:none;text-align:left;font-size:14px;color:#c0392b;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;">🚪 Terminar sessão</button>
     </div>
   </div>
   <div class="hdr-sub" id="hdr-sub">Agenda</div>
@@ -1623,9 +1624,9 @@ function showApp(user) {
   document.getElementById('main-header').style.display = '';
   document.getElementById('main-app').style.display = '';
   const gr = document.getElementById('user-greeting');
-  if(gr) gr.textContent = '👤 ' + user.name;
+  if(gr) gr.innerHTML = '👤 <span>' + user.name + '</span> <span style="opacity:.5;font-size:10px;">▼</span>';
   const mn = document.getElementById('logout-menu-name');
-  if(mn) mn.textContent = user.name;
+  if(mn) mn.textContent = '👤 ' + user.name;
   resetSessionTimer();
   loadData();
 }
